@@ -1,0 +1,36 @@
+Metadata-Version: 2.0
+Name: plus
+Version: 1994.12.4
+Summary: A tool for helping you config, visualize, log and debug deep learning.
+Home-page: https://github.com/SHTUPLUS/Venus
+Author: Rhysiyan
+Author-email: yanshp@shanghaitech.com
+License: MIT
+Description-Content-Type: text/markdown
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=2.7.0
+Requires-Dist: visdom
+
+
+# Venus
+A useful wheel for writing and debugging the dl program.
+
+## Recommended Practice
+* pip install --force plus
+
+
+## Tools recommened
+* sacred
+* visdom
+
+### Installation
+* wget https://github.com/SHTUPLUS/Venus/requirements.txt && pip install -r requirements.txt
+
+
+

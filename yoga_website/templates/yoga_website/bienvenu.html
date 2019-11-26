@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.0.js" integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'yoga_website/style.css' %}">
+    <script type="text/javascript" src="{% static 'yoga_website/script.js' %}"></script>
+    <title>{% block title %} Accueil {% endblock title %} </title>
+    <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
+
+</head>
+<body class="bg-beige">
+<nav id="nav_bar" class="navbar navbar-expand-lg navbar-light bg-light shadow">
+  <a class="navbar-brand" href="#"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'home'%}"><h3>Accueil</h3></a>
+
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'yoga'%}"><h3>Yoga</h3></a>
+
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'video'%}"><h3>Vidéos/Musicothérapie</h3></a>
+
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'nidra' %}"><h3>Yoga Nidra</h3></a>
+
+
+<!--GESTION DE L'UTILISATEUR ACTIF-->
+        <!--ADMIN-->
+        {% if user1 == "admin" %}
+            <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'ateliers' %}"><h3>Ateliers</h3></a>
+            <a class="nav-item nav-link text-{{ var_color }} mr-5 " href="{% url 'clients'%}"><h3>Clients</h3></a>
+            <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'espace' %}"><h3> <i class="fas fa-leaf"></i> {{ user.username }} </h3></a>
+              <a href="#" data-toggle="modal" data-target="#infos" class="nav-item nav-link text-{{ var_color }} mr-5"><h3>Déconnexion</h3></a>
+
+                <div class="modal p-5" id="infos">
+                  <div class="modal-dialog p-5">
+                    <div class="modal-content p-5 center-block text-center">
+                      <h3>Voulez vous vraiment vous déconnecter ? </h3>
+                        <a href="{% url 'deconnexion'%}">
+                            <button type="button" class="btn btn-outline-{{ var_color }} center-block">Me déconnecter</button>
+                        </a>
+
+                    </div>
+                  </div>
+                </div>
+        {% else %}
+        {% endif %}
+        <!--CLIENT ACTIF-->
+        {% if user1 == "client" %}
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'contact'%}"><h3>Contact</h3></a>
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'ateliers' %}"><h3>Ateliers</h3></a>
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'espace' %}"><h3> <i class="fas fa-leaf"></i> {{ user.username }} </h3></a>
+      <a href="#" data-toggle="modal" data-target="#infos" class="nav-item nav-link text-{{ var_color }} mr-5"><h3>Déconnexion</h3></a>
+
+        <div class="modal p-5" id="infos">
+          <div class="modal-dialog p-5">
+            <div class="modal-content p-5 center-block text-center">
+              <h3>Voulez vous vraiment vous déconnecter ? </h3>
+                <a href="{% url 'deconnexion'%}">
+                    <button type="button" class="btn btn-outline-{{ var_color }} center-block">Me déconnecter</button>
+                </a>
+
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% endif %}
+        <!--CLIENT NON ACTIF-->
+        {% if user1 == "client_not_active" %}
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'espace' %}"><h3> <i class="fas fa-leaf"></i> {{ user.username }} </h3></a>
+      <a href="#" data-toggle="modal" data-target="#infos" class="nav-item nav-link text-{{ var_color }} mr-5"><h3>Déconnexion</h3></a>
+
+        <div class="modal p-5" id="infos">
+          <div class="modal-dialog p-5">
+            <div class="modal-content p-5 center-block text-center">
+              <h3>Voulez vous vraiment vous déconnecter ? </h3>
+                <a href="{% url 'deconnexion'%}">
+                    <button type="button" class="btn btn-outline-{{ var_color }} center-block">Me déconnecter</button>
+                </a>
+
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {% endif %}
+        <!--Nouvel utilisateur-->
+        {% if user1 == "new_user" %}
+      <a class="nav-item nav-link text-{{ var_color }} mr-5 " href="{% url 'connexion'%}"><h3>Connexion</h3></a>
+      <a class="nav-item nav-link text-{{ var_color }} mr-5" href="{% url 'inscription' %}"><h3>Inscription</h3></a>
+        {% else %}
+        {% endif %}
+    </div>
+  </div>
+</nav>
+
+
+
+
+</div>
+{% block content %}
+<br>
+<h3 class="text-center text-{{ var_color }}">Pensée de la semaine : <br> <em> <hr> <strong> {{ phrase_du_jour }} </strong> </em> </h3>
+<a target="_blank" class="text-center mx-auto d-block" href="{% static 'yoga_website/ASSOCIATION_MELODYOGA.pdf' %}"> <h4> <i class="fas fa-book-reader"></i> Statuts de l'association</h4> </a>
+<img src="{% static 'yoga_website/background.jpg' %}" class="img-fluid mx-auto d-block rounded" alt="Responsive image">
+{% endblock content %}
+<footer >
+    <h3 class="d-inline float-left" style="text-shadow: 0.1em 0.1em 0.2em black">{{ date_actuelle }}</h3>
+    <h3 id="scroll-up" class="d-inline float-right" style="text-shadow: 0.1em 0.1em 0.2em black"><i class="fas fa-angle-double-up"></i> </h3>
+</footer>
+    <hr>
+</body>
+</html>

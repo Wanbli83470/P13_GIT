@@ -1,0 +1,77 @@
+{% extends 'yoga_website/bienvenu.html' %}
+{% block title %} Ateliers {% endblock %}
+{% block content %}
+<div id="ateliers" class="container-fluid bg-vert ateliers p-5">
+
+
+{% if user1 == "client" %}
+{% else %}
+    <a href="{% url 'create-atelier'%}">
+            <button class="text-white btn btn-{{ var_color }} text-center d-block mx-auto btn-lg"> <strong> Créer un atelier </strong> </button>
+    </a>
+{% endif %}
+
+    <h1 class="text-white text-center">Les prochains ateliers : </h1>
+
+<hr class="border border-white">
+
+    {% for l in ateliers %}
+
+    {% if l.places == True %}
+        <div id="atelier{{l.id}}" class="container bg-light mt-5 p-4 rounded shadow-lg ateliers border border-primary">
+            {% if user1 == "client" %}
+                <h2> {{  l.type }} -- {{ l.date }} </h2>
+                <h3> Lieux : {{ l.lieux }}</h3>
+
+                <a href="{% url 'detailAteliers'  l.id id_client %}">
+                    <button type="button" class="btn btn-lg btn-outline-primary text-center mt-2"> <strong>  >>> Details et inscription </strong> </button>
+                </a>
+
+            {% else %}
+                <form class="DeleteAjax" method="POST" action="{% url 'deleteAtelier' l.id %}" > {% csrf_token %}
+                    <button class="btn btn-lg rounded bg-primary d-inline float-right border border-dark"><i class="fas fa-trash-alt text-white"></i></button>
+                </form>
+                <h2> {{  l.type }} -- {{ l.date }} </h2>
+                <h3> Lieux : {{ l.lieux }}</h3>
+                <p>Participants : {{l.participants}}</p>
+                <h3 class="bg-primary text-white d-inline p-2 rounded-right"> <strong> ID : {{l.id}} </strong> </h3>
+
+                <a href="{% url 'participants' l.id %}"><button class="bg-violet float-right btn btn-lg text-white d-inline rounded-right"><strong>Gestion des participants </strong> </button></a>
+            {% endif %}
+        </div>
+
+    {% else %}
+
+        <div id="atelier{{l.id}}" class="container bg-light mt-5 p-4 rounded shadow-lg ateliers border border-danger">
+            <h2> {{  l.type }} -- {{ l.date }} </h2>
+
+            <h3> Lieux : {{ l.lieux }}</h3>
+            {% if user1 == "client" %}
+                <h2> {{  l.type }} -- {{ l.date }} </h2>
+                <h3> Lieux : {{ l.lieux }}</h3>
+                <p> Plus de places disponibles pour cet atelier. </p>
+            {% else %}
+                <form class="DeleteAjax" method="POST" action="{% url 'deleteAtelier' l.id %}" > {% csrf_token %}
+                    <button class="btn btn-lg rounded bg-primary d-inline float-right border border-dark"><i class="fas fa-trash-alt text-white"></i></button>
+                </form>
+
+                <h2> {{  l.type }} -- {{ l.date }} </h2>
+                <h3> Lieux : {{ l.lieux }}</h3>
+                <p>Participants : {{l.participants}}</p>
+                <h3 class="bg-primary text-white d-inline p-2 rounded-right"><strong> ID : {{l.id}} </strong> </h3>
+                <button class="bg-violet float-right btn btn-lg text-white d-inline rounded-right"><strong>Gestion des participants </strong> </button>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+
+    {% empty %}
+
+        <p class="text-center text-white"> De nouveaux ateliers sont en cours de préparations...</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends 'yoga_website/bienvenu.html' %}
+{% block title %} Inscribe {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h1 class="m-5 text-{{var_color}}"> Participants à l'atelier :<strong>{{ select_atelier.type }}</strong> ; date :  <strong>{{ select_atelier.date }}</strong> </h1>
+
+<table class="table table-{{var_color}} m-5">
+  <hr>
+  <thead>
+  </thead>
+  <tbody>
+    {% for p in select_participants %}
+      <tr>
+        <td>{{ p.client }}</td>
+      </tr>
+    {% empty %}
+    <h4 class="m-5" >Aucun participants enregistrés</h4>
+    {% endfor %}
+
+  </tbody>
+</table>
+<h2 class="m-5 text-{{var_color}}"> Nombres de places : <strong> {{select_atelier.nb_places}} </strong> </h2>
+<h2 class="m-5 text-{{var_color}}"> Restantes : <strong> {{places_restantes}} </strong> </h2>
+<h2 class="m-5 text-{{var_color}}"> Lieux : <strong> {{select_atelier.lieux}} </strong> </h2>
+{% endblock content %}

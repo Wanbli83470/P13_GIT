@@ -1,0 +1,1 @@
+[{"model": "yoga_website.client", "pk": 1, "fields": {"user": 2, "prenom": "Thomas", "nom": "ESTIVAL", "tel": "0771591021", "date": "1995-10-10T00:00:00Z", "email": "estival.t@hotmail.com"}}, {"model": "yoga_website.client", "pk": 2, "fields": {"user": 1, "prenom": "Sophie", "nom": "Durbec", "tel": "0767719576", "date": "1972-11-06T00:00:00Z", "email": "estival.t@hotmail.com"}}]

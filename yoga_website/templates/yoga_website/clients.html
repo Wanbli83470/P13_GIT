@@ -1,0 +1,43 @@
+{% extends 'yoga_website/bienvenu.html' %}
+{% block title %} Clients {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+<form class="text-center" action="{% url 'clients' %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" value="User" class="btn btn-{{var_color}}">Enregistrer</button>
+</form>
+<br>
+<table class="table table-{{var_color}}">
+  <h1 class="text-center">Utilisateurs enregistrés</h1>
+  <hr>
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Adresse email</th>
+      <th scope="col">Nom d'utilisateur</th>
+      <th scope="col">Prénom</th>
+      <th scope="col">Date de naissance</th>
+      <th scope="col">Tel</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in Clients %}
+      <tr>
+        <th scope="row">1</th>
+        <td>mail</td>
+        <td>{{  c.user }}</td>
+        <td>{{  c.prenom }}</td>
+        <td>{{  c.date }}</td>
+        <td>{{  c.tel }}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock content %}
+

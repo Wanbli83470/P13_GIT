@@ -1,0 +1,1 @@
+web: gunicorn meloyoga.wsgi --log-file -

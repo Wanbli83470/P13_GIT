@@ -1,0 +1,12 @@
+{% extends 'yoga_website/bienvenu.html' %}
+{% block title %} Inscribe {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h1 class="text-center">Annulation de votre participation enregistré : Vous allez être redirigé dans 5 secondes vers notre page d'accueil. </h1>
+<script>
+    setTimeout(function(){
+        window.location.href = '{% url 'home' %}';
+    }, 5000);
+</script>
+{% endblock content %}

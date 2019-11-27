@@ -145,5 +145,5 @@ else:
     DEBUG = True
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'P8/static'),
+    os.path.join(BASE_DIR, 'static'),
 )

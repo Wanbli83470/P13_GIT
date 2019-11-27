@@ -1,1 +1,1 @@
-web: gunicorn meloyoga.wsgi --log-file -
+web: gunicorn melodyoga.wsgi --log-file -

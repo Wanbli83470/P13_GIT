@@ -8,7 +8,7 @@ from yoga_website.views import (AtelierListView,
 
 from. import views
 urlpatterns = [
-    path('home', views.home, name="home"),
+    path('', views.home, name="home"),
     path('yoga', views.yoga, name="yoga"),
     path('video', views.video, name="video"),
     path('connexion', views.connexion, name="connexion"),

@@ -94,6 +94,9 @@ def registrationValid(request, username, email):
     Body = f"Bonjour {username} Nous vous confirmons votre inscription sur melodyoga, En vous souhaitant une bonne journée"
     email_confirm = EmailMessage(Subject, Body, adresse_mail, [email])
     email_confirm.send()
+
+    email_confirm_me = EmailMessage(Subject, Body, adresse_mail, [adresse_mail])
+    email_confirm_me.send()
     print("mail envoyé")
     username = str(username)
     return render(request, 'yoga_website/registration_valid.html', {'username': username, 'email': email, 'var_color':var_color, 'admin':admin, 'user1':user1})
@@ -135,7 +138,7 @@ def connexion(request):
             if user:  # Si l'objet renvoyé n'est pas None
                 login(request, user)  # nous connectons l'utilisateur
                 print("redirection accueil")
-                return redirect('/home')
+                return redirect('/')
             else: # sinon une erreur sera affichée
                 print("Else !")
                 error = True
@@ -176,7 +179,7 @@ def deconnexion(request):
     var_color = "vert"
     admin = False
     print("var_color devient {}".format(var_color))
-    return redirect ('home')
+    return redirect('home')
 
 class AtelierListView(ListView):
     model = Atelier
@@ -280,12 +283,14 @@ def inscribe(request, idatelier, idclient):
     save = Inscribe(client=client, atelier=atelier)
     save.save()
 
-    Subject = "Votre inscription : Atelier chez Melodyoga"
+    Subject = f"{username} Votre inscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
     Body = f"Bonjour {username} Nous vous confirmons votre inscription pour l'atelier en date du {atelier.date}, en vous souhaitant une bonne journée."
     email_confirm = EmailMessage(Subject, Body, adresse_mail, [email])
     email_confirm.send()
 
+    email_confirm_me = EmailMessage(Subject, Body, adresse_mail, [adresse_mail])
+    email_confirm_me.send()
     return render(request, 'yoga_website/inscribe.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 def unsubscribe(request, idatelier, idclient):
@@ -310,6 +315,9 @@ def unsubscribe(request, idatelier, idclient):
     Body = f"Bonjour {username} Nous avons bien noté votre annulation pour l'atelier en date du {atelier.date} et espérons vous revoir prochainement."
     email_confirm = EmailMessage(Subject, Body, adresse_mail, [email])
     email_confirm.send()
+
+    email_confirm_me = EmailMessage(Subject, Body, adresse_mail, [adresse_mail])
+    email_confirm_me.send()
 
 
     return render(request, 'yoga_website/unsubscribe.html', {'var_color': var_color, 'admin': admin, 'user1': user1})

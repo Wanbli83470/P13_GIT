@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY_P13")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['melodyoga.herokuapp.com']
+ALLOWED_HOSTS = ['melodyoga.herokuapp.com', '127.0.0.1']
 
 
 # Application definition

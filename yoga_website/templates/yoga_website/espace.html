@@ -4,11 +4,15 @@ Mon espace
 {% endblock title %}
 
 {% block content %}
+
 <div class="p-3 bg-white shadow-lg mt-2">
     <h1>Mon espace personnel :</h1>
     <h2>Bienvenue <strong class="text-vert">{{ user.username }} </strong> </h2>
 {% if user1 == "client" %}
     <h3 class="">Votre compte est bien activé <i class="fas fa-clipboard-check text-{{var_color}}"></i></h3>
+    <div class="p-3 bg-white shadow-lg mt-2">
+        <h1>Mes ateliers : </h1>
+    </div>
         {% else %}
         {% endif %}
 
@@ -19,9 +23,6 @@ Mon espace
 </div>
 
 
-<div class="p-3 bg-white shadow-lg mt-2">
-    <h1>Mes ateliers : </h1>
 
-</div>
 
 {% endblock content %}

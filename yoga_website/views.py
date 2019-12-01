@@ -25,10 +25,6 @@ import os
 var_color = "vert"
 admin = False
 mail_soph = os.environ.get("ADRESS_P13_MAIL")
-def get_id_client(request):
-    username = request.user
-    client = Client.objects.get(user=username)
-    return client.id
 
 def user_actif(request):
     list_client = []
@@ -63,6 +59,11 @@ def user_actif(request):
         user1 = "new_user"
     return user1
     print(user1)
+
+def get_id_client(request):
+    username = request.user
+    client = Client.objects.get(user=username)
+    return client.id
 
 def home(request):
     user1 = user_actif(request)
@@ -197,10 +198,12 @@ class CreateAteliersView(LoginRequiredMixin, CreateView):
 
 
 def ateliers(request):
-    id_client = get_id_client(request)
     user1 = user_actif(request)
     ateliers = Atelier.objects.order_by('date')
-
+    if user1 != "admin":
+        id_client = get_id_client(request)
+    else:
+        id_client = 0
     return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin, 'user1': user1, 'id_client': id_client})
 
 def detailAteliers(request, idatelier, idclient):

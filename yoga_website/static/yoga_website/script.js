@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
    $("#card").hide();
    $("#card2").hide();
    $("#card3").hide();

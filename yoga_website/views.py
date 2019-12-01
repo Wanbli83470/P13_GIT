@@ -93,9 +93,13 @@ def registrationValid(request, username, email):
     adresse_mail = mail_soph
     Body = f"Bonjour {username} Nous vous confirmons votre inscription sur melodyoga, En vous souhaitant une bonne journée"
     email_confirm = EmailMessage(Subject, Body, adresse_mail, [email])
+    email_confirm.content_subtype = "html"
+    email_confirm.attach_file('Forumulaire_adhésion.pdf')
     email_confirm.send()
 
     email_confirm_me = EmailMessage(Subject, Body, adresse_mail, [adresse_mail])
+    email_confirm.content_subtype = "html"
+    email_confirm_me.attach_file('Forumulaire_adhésion.pdf')
     email_confirm_me.send()
     print("mail envoyé")
     username = str(username)

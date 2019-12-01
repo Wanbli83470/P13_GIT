@@ -1,6 +1,5 @@
 $(document).ready(function(){
     var larg = (window.innerWidth);
-    alert (larg)
 
     if (larg < 1000) {
         $("#rubrique").hide();

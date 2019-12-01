@@ -139,7 +139,7 @@ EMAIL_PORT = 587
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 if os.environ.get('ENV') == 'PRODUCTION':
-    DEBUG = False
+    DEBUG = True
 
 else:
     DEBUG = True

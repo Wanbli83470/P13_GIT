@@ -1,4 +1,5 @@
 $(document).ready(function(){
+//Amélioration responsive
     var larg = (window.innerWidth);
 
     if (larg < 1000) {

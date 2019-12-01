@@ -201,7 +201,7 @@ def ateliers(request):
     user1 = user_actif(request)
     ateliers = Atelier.objects.order_by('date')
 
-    return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color':var_color, 'admin':admin, 'user1':user1, 'id_client':id_client})
+    return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin, 'user1': user1, 'id_client': id_client})
 
 def detailAteliers(request, idatelier, idclient):
     user1 = user_actif(request)

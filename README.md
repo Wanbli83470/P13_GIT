@@ -25,7 +25,7 @@ Guide d'installation du programme :
 3. Entrer dans le dossier téléchargé et activez l'environnement virtuel à l'aide de la commande suivante : "./venv/bin/activate"
 4. Installer les paquets et les dépendances à l'aide de la commande "pip install -r requirements.txt"
 5. Lancer le programme avec la commande suivante : "Python manage.py runserver"
-6. Ouvrer votre navigateur et rendez-vous à l'adresse suivante : "http://localhost:8000/"
+6. Ouvrez votre navigateur et rendez-vous à l'adresse suivante : "http://localhost:8000/"
 
 
 Launching of the test:

@@ -40,13 +40,13 @@ def user_actif(request):
     print(mon_user)
     user = str
     print(var_color)
-    if mon_user == "admin":
+    if mon_user == "thomas":
         print("admin connecté")
         var_color = "violet"
         admin = True
         user1 = "admin"
         print(var_color, admin)
-    elif mon_user in list_client :
+    elif mon_user in list_client:
         var_color = "vert"
         user1 = "client"
         print(">>> Client enregistré et validé : {}".format(mon_user))
@@ -119,11 +119,11 @@ def register(request):
             messages.success(request, f'Votre compte {username} est crée')
             form_adhesion(email=email, username=username)
             return redirect("registrationValid", username=username, email=email)
-        else :
+        else:
             error = True
             print(error)
             print("Echec")
-    else :
+    else:
         form = RegistrationForm(request.POST)
 
     return render(request, 'yoga_website/register.html', {'form':form, 'var_color':var_color, 'admin':admin, 'user1':user1})
@@ -150,7 +150,7 @@ def connexion(request):
     else:
         form = ConnexionForm()
 
-    return render(request, 'yoga_website/connect.html', {'form':form,'error':error, 'var_color':var_color, 'admin':admin, 'user1':user1})
+    return render(request, 'yoga_website/connect.html', {'form':form,'error':error, 'var_color':var_color, 'admin': admin, 'user1':user1})
 
 def contact(request):
     user1 = user_actif(request)
@@ -219,7 +219,7 @@ def detailAteliers(request, idatelier, idclient):
     nb_participants = len(nb_participants)
     places_restantes = atelier.nb_places - nb_participants
     Places = True
-    if places_restantes == 0 :
+    if places_restantes == 0:
         Places = False
     else :
         Places = True

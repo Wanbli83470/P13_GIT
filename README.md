@@ -3,7 +3,7 @@ Project : MELODYOGA
 
 Tableau Trello : https://trello.com/b/M3LJ6NaK/p13
 
-Adresse de déploiement : EN COURS
+Adresse de déploiement : https://melodyoga.herokuapp.com/
 
 Program Installation Guide :
 ----------------------------

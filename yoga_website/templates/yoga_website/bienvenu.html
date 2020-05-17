@@ -118,10 +118,12 @@
     <img src="{% static 'yoga_website/background.jpg' %}" class="img-fluid mx-auto d-block rounded" alt="Responsive image">
 {% endblock content %}
 
-    <footer>
-        <h3 class="d-inline float-left" style="text-shadow: 0.1em 0.1em 0.2em black">{{ date_actuelle }}</h3>
-        <h3 id="scroll-up" class="d-inline float-right" style="text-shadow: 0.1em 0.1em 0.2em black"><i class="fas fa-angle-double-up"></i> </h3>
+    <footer class="p-5">
+        <h3 class="d-inline float-left text-primary" style="text-shadow: 0.1em 0.1em 0.2em black">{{ date_actuelle }}</h3>
+        <a href="#">
+            <h3 id="scroll-up" class="d-inline float-right text-primary" style="text-shadow: 0.1em 0.1em 0.2em black"><i class="fas fa-angle-double-up"></i> </h3>
+        </a>
     </footer>
-
+    <br>
 </body>
 </html>

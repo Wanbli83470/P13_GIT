@@ -140,7 +140,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 if os.environ.get('ENV') == 'PRODUCTION':
     DEBUG = True
-
 else:
     DEBUG = True
 

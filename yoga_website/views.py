@@ -86,7 +86,11 @@ def video(request):
 
 def espace(request):
     user1 = user_actif(request)
-    return render(request, "yoga_website/espace.html", {'var_color':var_color, 'var_color':var_color, 'admin':admin, 'user1':user1})
+    print(user1)
+    print(request.user)
+    #chemin_pdf = "/static/adhésion/Forumulaire_adhésion_Franck899.pdf"
+    chemin_pdf = f"/static/adhésion/Forumulaire_adhésion_{request.user}.pdf"
+    return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin, 'user1': user1, 'chemin_pdf': chemin_pdf})
 
 def registrationValid(request, username, email):
     user1 = user_actif(request)
@@ -262,11 +266,11 @@ def clients(request):
         if form.is_valid():
             form.save()
             return redirect('clients')
-        else :
+        else:
             error = True
             print(error)
             print("Echec")
-    else :
+    else:
         form = ClientsForm(request.POST)
 
     return render(request, 'yoga_website/clients.html', {"Clients": Clients, "form":form, 'var_color':var_color, 'admin':admin, 'user1':user1})

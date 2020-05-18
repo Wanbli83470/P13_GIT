@@ -5,7 +5,7 @@ from random import randint
 
 
 def form_adhesion(email, username):
-    pdf = canvas.Canvas("Forumulaire_adhésion.pdf")
+    pdf = canvas.Canvas(f"yoga_website/static/adhésion/Forumulaire_adhésion_{username}.pdf")
     pdf.drawString(200, 800, "Formulaire d'adhésion : ")
     pdf.drawString(150, 770, "Association Melodyoga 1496 quartier des longuettes")
     pdf.drawString(180, 790, "."*53)

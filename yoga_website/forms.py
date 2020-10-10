@@ -38,6 +38,6 @@ class ResetPassword(forms.Form):
 
 
 class ResetPasswordStep2(forms.Form):
-    password = forms.PasswordInput()
-    code = forms.CharField(label="username", max_length=30)
+    password = forms.CharField(max_length=32, widget=forms.PasswordInput)
+    code = forms.CharField(label="Code Email", max_length=30)
 

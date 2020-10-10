@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
 # Create your models here.
+import random
 
 
 class Pdf(models.Model):
@@ -42,3 +43,8 @@ class Inscribe(models.Model):
 
     def __str__(self):
         return "INSCRIPTION DE : \n {} POUR ATELIER : {}".format(self.client, self.atelier)
+
+
+class SecretCode(models.Model):
+    user = models.OneToOneField(User, on_delete=ChildProcessError)
+    code = models.CharField(max_length=254, default=str(random.randint(10000, 100000)))

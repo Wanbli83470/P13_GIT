@@ -10,7 +10,7 @@ from django.views.generic import (
     CreateView,
     DeleteView
     )
-from yoga_website.models import Atelier, Client, Inscribe, Pdf
+from yoga_website.models import Atelier, Client, Inscribe, Pdf, SecretCode
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -21,6 +21,7 @@ from .generate_pdf import form_adhesion
 import time
 from django.urls import reverse
 import os
+import random
 
 var_color = "vert"
 admin = False
@@ -35,17 +36,13 @@ def user_actif(request):
     print(list_client)
     global var_color
     global admin
-    print("utilisateur connecté : {}".format(request.user))
     mon_user = str(request.user)
-    print(mon_user)
     user = str
-    print(var_color)
     if mon_user == "thomas":
         print("admin connecté")
         var_color = "violet"
         admin = True
         user1 = "admin"
-        print(var_color, admin)
     elif mon_user in list_client:
         var_color = "vert"
         user1 = "client"
@@ -58,7 +55,6 @@ def user_actif(request):
         var_color = "vert"
         user1 = "new_user"
     return user1
-    print(user1)
 
 
 def get_id_client(request):
@@ -119,7 +115,8 @@ def registrationValid(request, username, email):
     email_confirm_me.send()
     print("mail envoyé")
     username = str(username)
-    print(user1)
+    print("request.user : ")
+    print(request.user)
     return render(request, 'yoga_website/registration_valid.html', {'username': username, 'email': email, 'var_color': var_color,
                                                                     'admin': admin, 'user1': user1})
 
@@ -136,7 +133,7 @@ def register(request):
             email = form.cleaned_data['email']
             messages.success(request, f'Votre compte {username} est crée')
             form_adhesion(email=email, username=username)
-            return redirect("registrationValid", request, username=username, email=email)
+            return redirect("registrationValid", username=username, email=email)
         else:
             error = True
             print(error)
@@ -205,7 +202,6 @@ def deconnexion(request):
     logout(request)
     var_color = "vert"
     admin = False
-    print("var_color devient {}".format(var_color))
     return redirect('home')
 
 
@@ -367,12 +363,20 @@ def delete_compte(request):
     user = request.user
     user1 = user_actif(request)
 
+    try:
+        secretCode = SecretCode.objects.get(user=user)
+        secretCode.delete()
+    except :
+        pass
+
     if user1 == "client":
         compte_delete = Client.objects.get(user=user)
         print("Client actif")
         for i in Inscribe.objects.filter(client=compte_delete):
             print(i.client)
             i.delete()
+
+
 
         pdf_delete = Pdf.objects.get(user=user)
         pdf_delete.delete()
@@ -385,16 +389,11 @@ def delete_compte(request):
         pdf_delete.delete()
         user.delete()
 
-    """1) Supprimer des ateliers
-        2) Supprimer le client
-        3) Supprimer relation avec PDF
-        4) Supprimer l'utilisateur
-        """
 
     return redirect('home')
 
 
-def reset_password(request):
+def resetPassword(request):
 
     if request.method == "POST":
         print("Méthode POST ok")
@@ -409,7 +408,7 @@ def reset_password(request):
             if adresse_mail == "":
                 adresse_mail = "null"
             print(username, adresse_mail)
-            return redirect("reset_password_step", username=username, adresse_mail=adresse_mail)
+            return redirect("resset_password_step", username=username, adresse_mail=adresse_mail,)
         else:
             error = True
             print(error)
@@ -421,24 +420,50 @@ def reset_password(request):
                                                                 'form_password': form_password})
 
 
-def reset_password_step(request, username, adresse_mail):
-    username = username
-    adresse_mail = adresse_mail
+def resetPasswordStep(request, username, adresse_mail):
+    username, adresse_mail = username, adresse_mail
+    utilisateur, echec = None, False
+
+    """On détermine l'utilisateur"""
+    if username == "null" and adresse_mail == "null":
+        echec = True
+    elif username == "null":
+        utilisateur = User.objects.get(email=adresse_mail)
+    elif adresse_mail == "null":
+        utilisateur = User.objects.get(username=username)
+    print(utilisateur)
+    secret_entrance = SecretCode.objects.get_or_create(user=utilisateur)
+    secret_entrance = SecretCode.objects.get(user=utilisateur)
+    print(f"Code secret de l'utilisateur : {secret_entrance.code}")
 
     if request.method == "POST":
         print("Méthode POST ok")
-        form_password2 = ResetPasswordStep2(request.POST)
+        form_password = ResetPasswordStep2(request.POST)
 
-        if form_password2.is_valid():
+        if form_password.is_valid():
             print("form password valide")
-            username = form_password2.cleaned_data["username"]
-            adresse_mail = form_password2.cleaned_data["adresse_mail"]
-            if username == "":
-                username = "null"
-            if adresse_mail == "":
-                adresse_mail = "null"
-            print(username, adresse_mail)
-            return redirect("reset_password_step", username=username, adresse_mail=adresse_mail)
+            code = form_password.cleaned_data["code"]
+            password = str(form_password.cleaned_data["password"])
+            print(code, str(secret_entrance.code))
+
+            if str(code) == str(secret_entrance.code):
+                print("Changement du password autorisé ! ")
+                utilisateur.set_password(password)
+                utilisateur.save()
+                print(utilisateur)
+                print(utilisateur.password)
+                """On attribue un nouveau code secret pour l'avenir"""
+                code_secret = str(random.randint(10000, 100000))
+                print("code généré : " + code_secret)
+                secret_entrance = SecretCode.objects.get(user=utilisateur)
+                secret_entrance.code = str(code_secret)
+                secret_entrance.save()
+                """Redirection"""
+                return redirect("home")
+
+            else:
+                print("Changement de passward non autorisé")
+
         else:
             error = True
             print(error)
@@ -446,4 +471,6 @@ def reset_password_step(request, username, adresse_mail):
     else:
         form_password = ResetPasswordStep2()
 
-    return render(request, 'yoga_website/reset_password_step.html', {'var_color': var_color, 'admin': admin, 'form_password2': form_password2})
+    return render(request, 'yoga_website/reset_password_step.html', {'var_color': var_color, 'admin': admin,
+                                                                     'form_password': form_password, 'echec': echec,
+                                                                     'utilisateur': utilisateur, "username": username})

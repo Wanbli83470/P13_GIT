@@ -28,4 +28,7 @@ urlpatterns = [
     path('new-atelier/', CreateAteliersView.as_view(), name="create-atelier"),
     path('registrationValid/<str:username>/<str:email>', views.registrationValid, name="registrationValid"),
     path('deleteAtelier/<int:idAtelier>', views.deleteAtelier, name="deleteAtelier"),
+    path('delete_compte', views.delete_compte, name="delete_compte"),
+    path('reset_password', views.reset_password, name="reset_password"),
+    path('reset_password_step/<str:username>/<str:adresse_mail>', views.reset_password_step, name="reset_password_step"),
 ]

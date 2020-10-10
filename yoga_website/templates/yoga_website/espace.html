@@ -10,21 +10,34 @@ Mon espace
     <h1>Mon espace personnel :</h1>
     <h2>Bienvenue <strong class="text-vert">{{ user.username }} </strong> </h2>
 {% if user1 == "client" %}
-    <h3 class="">Votre compte est bien activé <i class="fas fa-clipboard-check text-{{var_color}}"></i></h3>
-    <div class="p-3 bg-white shadow-lg mt-2">
-        <h1>Mes ateliers : </h1>
-    </div>
+    <h3 class="">Votre compte est activé <i class="fas fa-clipboard-check text-{{var_color}}"></i></h3>
 {% else %}
+
 {% endif %}
 
 {% if user1 == "client_not_active" %}
     <h3>Attention ! Votre compte n'est pas encore activé <i class="fas fa-clipboard-check text-danger"></i></h3>
+    <h4>Veuillez remplir et nous transmettre votre forumalaire : <a target="_blank" href="{{ chemin_pdf }}"> Télécharger mon formulaire </a> </h4>
 {% else %}
-    <p>TETS</p>
 {% endif %}
-<h4>Veuillez remplir et nous transmettre votre forumalaire : <a target="_blank" href="{{ chemin_pdf }}"> Télécharger mon formulaire </a> </h4>
 </div>
-
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+{% if user1 != "admin" %}
+<a href="{% url 'delete_compte'%}">
+    <div class="center-block text-center">
+        <button type="button" class="btn btn-outline-danger btn-lg">Supprimer mon compte</button>
+    </div>
+</a>
+{% else %}
+{% endif %}
 
 
 

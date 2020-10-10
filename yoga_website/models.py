@@ -5,6 +5,11 @@ from django.utils import timezone
 # Create your models here.
 
 
+class Pdf(models.Model):
+    user = models.OneToOneField(User, on_delete=ChildProcessError)
+    chemin_file_pdf = models.CharField(max_length=50)
+
+
 class Atelier(models.Model):
     type = models.CharField(max_length=30)
     nb_places = models.IntegerField()
@@ -25,10 +30,10 @@ class Client(models.Model):
     nom = models.CharField(max_length=255)
     tel = models.CharField(max_length=255)
     date = models.DateTimeField(default=timezone.now)
-    email = models.CharField(max_length=255)
+    email = models.EmailField(max_length=254)
 
     def __str__(self):
-        return "CLIENT : {} ||| NOM : {} ||| ID : {}".format(self.prenom, self.nom, self.id)
+        return "CLIENT : {} NOM : {} ID : {}\n Tél : {} Email : {}".format(self.prenom, self.nom, self.id, self.tel, self.email)
 
 
 class Inscribe(models.Model):

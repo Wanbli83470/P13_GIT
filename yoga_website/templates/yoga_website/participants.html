@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<h1 class="m-5 text-{{var_color}}"> Participants à l'atelier :<strong>{{ select_atelier.type }}</strong> ; date :  <strong>{{ select_atelier.date }}</strong> </h1>
+<h1 class="m-5 text-{{var_color}}"> <strong> {{ nb_participants }} </strong> Participants à l'atelier :<strong>{{ select_atelier.type }}</strong> ; date :  <strong>{{ select_atelier.date }}</strong> </h1>
 
 <table class="table table-{{var_color}} m-5">
   <hr>

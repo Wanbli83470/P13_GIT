@@ -389,6 +389,15 @@ def delete_compte(request):
         pdf_delete.delete()
         user.delete()
 
+    """Mail de confirmation"""
+    Subject = "Suppresion de votre compte sur melodyoga"
+    adresse_mail = mail_soph
+    Body = f"Bonjour {user.username} Nous vous confirmons suppresion de votre compte sur melodyoga, En vous souhaitant une bonne journée"
+    email_confirm = EmailMessage(Subject, Body, adresse_mail, [user.email])
+    email_confirm.send()
+
+    email_confirm_me = EmailMessage(Subject, Body, adresse_mail, [adresse_mail])
+    email_confirm_me.send()
 
     return redirect('home')
 
@@ -427,14 +436,36 @@ def resetPasswordStep(request, username, adresse_mail):
     """On détermine l'utilisateur"""
     if username == "null" and adresse_mail == "null":
         echec = True
-    elif username == "null":
-        utilisateur = User.objects.get(email=adresse_mail)
-    elif adresse_mail == "null":
-        utilisateur = User.objects.get(username=username)
-    print(utilisateur)
-    secret_entrance = SecretCode.objects.get_or_create(user=utilisateur)
-    secret_entrance = SecretCode.objects.get(user=utilisateur)
-    print(f"Code secret de l'utilisateur : {secret_entrance.code}")
+    else:
+        try:
+            utilisateur = User.objects.get(email=adresse_mail)
+            secret_entrance = SecretCode.objects.get_or_create(user=utilisateur)
+            secret_entrance = SecretCode.objects.get(user=utilisateur)
+            """Mail contenant le code secret"""
+            Subject = "Demande changement du mot de passe sur melodyoga"
+            adresse_mail = mail_soph
+            Body = f"Bonjour {utilisateur.username} Voici votre code secret {secret_entrance.code} " \
+                   f"Celui-ci vous sera demandé à l'étape suivante pour modifier votre mot de passe"
+            email_confirm = EmailMessage(Subject, Body, adresse_mail, [utilisateur.email])
+            email_confirm.send()
+            username = utilisateur.username
+        except:
+            try:
+                utilisateur = User.objects.get(username=username)
+                secret_entrance = SecretCode.objects.get_or_create(user=utilisateur)
+                secret_entrance = SecretCode.objects.get(user=utilisateur)
+                """Mail contenant le code secret"""
+                Subject = "Demande changement du mot de passe sur melodyoga"
+                adresse_mail = mail_soph
+                Body = f"Bonjour {utilisateur.username} Voici votre code secret {secret_entrance.code} " \
+                       f"Celui-ci vous sera demandé à l'étape suivante pour modifier votre mot de passe"
+                email_confirm = EmailMessage(Subject, Body, adresse_mail, [utilisateur.email])
+                email_confirm.send()
+
+            except:
+                echec = True
+
+    print(echec)
 
     if request.method == "POST":
         print("Méthode POST ok")
@@ -458,6 +489,15 @@ def resetPasswordStep(request, username, adresse_mail):
                 secret_entrance = SecretCode.objects.get(user=utilisateur)
                 secret_entrance.code = str(code_secret)
                 secret_entrance.save()
+
+                """Confirmation changement de mot de passe"""
+                Subject = "Mot de passe modifié Melodyoga"
+                adresse_mail = mail_soph
+                Body = f"{utilisateur.username} Nous vous confirmons le changement de mot de passe " \
+                       f"suite à votre procédure sur notre site"
+                email_confirm = EmailMessage(Subject, Body, adresse_mail, [utilisateur.email])
+                email_confirm.send()
+
                 """Redirection"""
                 return redirect("home")
 

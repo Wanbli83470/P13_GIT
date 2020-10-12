@@ -6,21 +6,53 @@ Mon espace
 
 {% block content %}
 
-<div class="p-3 bg-white shadow-lg mt-2">
+<div class="p-3 bg-white shadow-lg">
     <h1>Mon espace personnel :</h1>
     <h2>Bienvenue <strong class="text-vert">{{ user.username }} </strong> </h2>
 {% if user1 == "client" %}
     <h3 class="">Votre compte est activé <i class="fas fa-clipboard-check text-{{var_color}}"></i></h3>
-{% else %}
+</div>
+    <div class="p-3 bg-white shadow-lg mt-2">
+        <h1>Mes coordonnées :</h1>
+        <ul class="text-vert">
+                <li> <h4> <strong>Nom : </strong>{{ client.nom }}</h4></li>
+                <li> <h4> <strong>Prénom : </strong>{{ client.prenom }}</h4></li>
+                <li> <h4> <strong>N° : </strong>{{ client.tel }}</h4></li>
+                <li> <h4> <strong>Email : </strong>{{ client.email }}</h4></li>
+        </ul>
+    </div>
 
+    <div class="p-3 bg-white shadow-lg mt-2">
+        <h1>Mes prochaines séances :</h1>
+        <h3 >Vous êtes inscrit à <strong class="text-vert">{{ nb_sessions }} séance{{ nb_sessions|pluralize }} </strong></h3>
+    </div>
+
+    <div class="p-3 bg-white shadow-lg mt-2">
+        <h1>Modifier mes informations :</h1>
+    </div>
+{% else %}
 {% endif %}
 
 {% if user1 == "client_not_active" %}
     <h3>Attention ! Votre compte n'est pas encore activé <i class="fas fa-clipboard-check text-danger"></i></h3>
     <h4>Veuillez remplir et nous transmettre votre forumalaire : <a target="_blank" href="{{ chemin_pdf }}"> Télécharger mon formulaire </a> </h4>
+    <div class="p-3 bg-white shadow-lg mt-2">
+        <h1>Modifier mes informations :</h1>
+    </div>
 {% else %}
 {% endif %}
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
 <br>
 <br>
 <br>
@@ -29,13 +61,27 @@ Mon espace
 <br>
 <br>
 <br>
-<hr>
 {% if user1 != "admin" %}
-<a href="{% url 'delete_compte'%}">
+<hr class="text-alert border">
+
+<a href="#" data-target="#delete_compte" data-toggle="modal">
     <div class="center-block text-center">
         <button type="button" class="btn btn-outline-danger btn-lg">Supprimer mon compte</button>
     </div>
 </a>
+
+<div class="modal p-5" id="delete_compte">
+    <div class="modal-dialog p-5">
+        <div class="modal-content p-5 center-block text-center">
+            <h3>Souhaitez-vous supprimer <strong> définitivement </strong> votre compte ? </h3>
+            <a href="{% url 'delete_compte'%}">
+                <button type="button" class="btn btn-outline-danger center-block">Supprimer mon compte</button>
+            </a>
+
+        </div>
+    </div>
+</div>
+
 {% else %}
 {% endif %}
 

@@ -88,14 +88,15 @@ def video(request):
 def espace(request):
     user = request.user
     pdf_user = Pdf.objects.get_or_create(user=user, chemin_file_pdf="dawa.pdf")
-    print(pdf_user)
+    client = Client.objects.get(user=user)
+    sessions = Inscribe.objects.filter(client=client)
+    nb_sessions = len(sessions)
     user1 = user_actif(request)
-    print(user1)
-    print(request.user)
     #chemin_pdf = "/static/adhésion/Forumulaire_adhésion_Franck899.pdf"
     chemin_pdf = f"/static/adhésion/Forumulaire_adhésion_{request.user}.pdf"
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
-                                                        'user1': user1, 'chemin_pdf': chemin_pdf})
+                                                        'user1': user1, 'chemin_pdf': chemin_pdf,
+                                                        'nb_sessions': nb_sessions, 'client': client})
 
 
 def registrationValid(request, username, email):

@@ -89,14 +89,21 @@ def espace(request):
     user = request.user
     pdf_user = Pdf.objects.get_or_create(user=user, chemin_file_pdf="dawa.pdf")
     client = Client.objects.get(user=user)
-    sessions = Inscribe.objects.filter(client=client)
-    nb_sessions = len(sessions)
+    registered = Inscribe.objects.filter(client=client)
+    nb_registered = len(registered)
+    id_registered = [int(l) for l in str(registered) if l.isdecimal()]
+
+    ateliers = Atelier.objects.order_by('date')
+    id_ateliers = [i.id for i in ateliers]
+
     user1 = user_actif(request)
     #chemin_pdf = "/static/adhésion/Forumulaire_adhésion_Franck899.pdf"
     chemin_pdf = f"/static/adhésion/Forumulaire_adhésion_{request.user}.pdf"
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
                                                         'user1': user1, 'chemin_pdf': chemin_pdf,
-                                                        'nb_sessions': nb_sessions, 'client': client})
+                                                        'registered': registered, 'client': client,
+                                                        'nb_registered': nb_registered, 'id_registered': id_registered,
+                                                        'ateliers': ateliers})
 
 
 def registrationValid(request, username, email):

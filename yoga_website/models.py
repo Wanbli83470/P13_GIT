@@ -42,7 +42,12 @@ class Inscribe(models.Model):
     atelier = models.ForeignKey(Atelier, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "INSCRIPTION DE : \n {} POUR ATELIER : {}".format(self.client, self.atelier)
+        return "id = " + str(self.atelier.id)
+
+    def get_id(self):
+        l = list
+        l.append(self.atelier.id)
+        print(l)
 
 
 class SecretCode(models.Model):

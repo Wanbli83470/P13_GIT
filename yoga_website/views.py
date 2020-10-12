@@ -220,12 +220,24 @@ class CreateAteliersView(LoginRequiredMixin, CreateView):
 
 def ateliers(request):
     user1 = user_actif(request)
+    user = request.user
+    if user1 == "client":
+        client = Client.objects.get(user=user)
+        participants = str(Inscribe.objects.filter(client=client))
+        participants = [int(l) for l in participants if l.isdecimal()]
+        print(participants)
+
     ateliers = Atelier.objects.order_by('date')
+    id_ateliers = [i.id for i in ateliers]
+    print(id_ateliers)
+
     if user1 != "admin":
         id_client = get_id_client(request)
     else:
         id_client = 0
-    return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin, 'user1': user1, 'id_client': id_client})
+    return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin,
+                                                          'user1': user1, 'id_client': id_client,
+                                                          'participants': participants})
 
 
 def detailAteliers(request, idatelier, idclient):

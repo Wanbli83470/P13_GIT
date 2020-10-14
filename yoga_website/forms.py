@@ -16,7 +16,7 @@ class RegistrationForm(UserCreationForm):
         )
 
 class ConnexionForm(forms.Form):
-    username = forms.CharField(label="Nom d'utilisateur", max_length=30)
+    username = forms.CharField(label="Nom d'utilisateur", max_length=20)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
 
 
@@ -34,10 +34,16 @@ class ClientsForm(ModelForm):
 
 class ResetPassword(forms.Form):
     adresse_mail = forms.CharField(label="adresse_mail", max_length=30, required=False)
-    username = forms.CharField(label="username", max_length=30, required=False)
+    username = forms.CharField(label="username", max_length=20, required=False)
 
 
 class ResetPasswordStep2(forms.Form):
     password = forms.CharField(max_length=32, widget=forms.PasswordInput)
     code = forms.CharField(label="Code Email", max_length=30)
 
+
+class UserModif(forms.Form):
+    username = forms.CharField(label="username", max_length=20)
+    password = forms.CharField(max_length=32, widget=forms.PasswordInput)
+    adresse_mail = forms.EmailField(label="Email")
+    tel = forms.CharField(label="N°Tél", max_length=10)

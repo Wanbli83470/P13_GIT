@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, Http404
-from .forms import ConnexionForm, MailForm, RegistrationForm, ClientsForm, ResetPassword, ResetPasswordStep2
+from .forms import *
 from .citation import phrase_du_jour
 from django.core.mail import EmailMessage
 from django.urls import reverse
@@ -86,24 +86,65 @@ def video(request):
 
 
 def espace(request):
-    user = request.user
-    pdf_user = Pdf.objects.get_or_create(user=user, chemin_file_pdf="dawa.pdf")
-    client = Client.objects.get(user=user)
-    registered = Inscribe.objects.filter(client=client)
-    nb_registered = len(registered)
-    id_registered = [int(l) for l in str(registered) if l.isdecimal()]
-
-    ateliers = Atelier.objects.order_by('date')
-    id_ateliers = [i.id for i in ateliers]
-
     user1 = user_actif(request)
-    #chemin_pdf = "/static/adhésion/Forumulaire_adhésion_Franck899.pdf"
-    chemin_pdf = f"/static/adhésion/Forumulaire_adhésion_{request.user}.pdf"
+    """Update the data user"""
+    user_modif = UserModif()
+    user = request.user
+    chemin_pdf, registered, client, nb_registered, id_registered, ateliers = None, None, None, None, None, None
+    if user1 != "admin":
+        client = Client.objects.get(user=user)
+        if request.method == "POST":
+            print("Méthode POST ok")
+            user_modif = UserModif(request.POST)
+            if user1 == "client_not_active":
+                if user_modif.is_valid():
+                    print("form password valide")
+                    username = user_modif.cleaned_data["username"]
+                    adresse_mail = user_modif.cleaned_data["adresse_mail"]
+                    password = user_modif.cleaned_data["password"]
+                else:
+                    error = True
+                    print(error)
+                    print("Echec")
+
+            elif user1 == "client":
+                print("ON MODIFIE UN CLIENT")
+                if user_modif.is_valid():
+                    print("form password valide")
+                    username = user_modif.cleaned_data["username"]
+                    adresse_mail = user_modif.cleaned_data["adresse_mail"]
+                    password = user_modif.cleaned_data["password"]
+                    tel = user_modif.cleaned_data["tel"]
+                    """Modif"""
+                    client.tel = tel
+                    client.email = adresse_mail
+                    user.set_password(password)
+                    user.username = username
+                    user.email = adresse_mail
+                    user.save()
+                    client.save()
+
+        else:
+            user_modif = UserModif()
+
+
+        """Viewing the PDF form"""
+        pdf_user = Pdf.objects.get_or_create(user=user, chemin_file_pdf="dawa.pdf")
+        #chemin_pdf = "/static/adhésion/Forumulaire_adhésion_Franck899.pdf"
+        chemin_pdf = f"/static/adhésion/Forumulaire_adhésion_{request.user}.pdf"
+        """Display of workshops"""
+        registered = Inscribe.objects.filter(client=client)
+        nb_registered = len(registered)
+        id_registered = [int(l) for l in str(registered) if l.isdecimal()]
+        ateliers = Atelier.objects.order_by('date')
+        id_ateliers = [i.id for i in ateliers]
+    else:
+        pass
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
                                                         'user1': user1, 'chemin_pdf': chemin_pdf,
                                                         'registered': registered, 'client': client,
                                                         'nb_registered': nb_registered, 'id_registered': id_registered,
-                                                        'ateliers': ateliers})
+                                                        'ateliers': ateliers, 'user_modif': user_modif})
 
 
 def registrationValid(request, username, email):
@@ -228,6 +269,7 @@ class CreateAteliersView(LoginRequiredMixin, CreateView):
 def ateliers(request):
     user1 = user_actif(request)
     user = request.user
+    participants = None
     if user1 == "client":
         client = Client.objects.get(user=user)
         participants = str(Inscribe.objects.filter(client=client))

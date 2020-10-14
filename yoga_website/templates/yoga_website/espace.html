@@ -3,7 +3,7 @@
 {% block title %}
 Mon espace
 {% endblock title %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 
 <div class="p-3 bg-white shadow-lg">
@@ -39,6 +39,13 @@ Mon espace
 
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Modifier mes informations :</h1>
+
+        <form class="w-50 text-center d-block mx-auto" role="form" action="{% url 'espace' %}" method="post">
+            {% csrf_token %}
+            {{ user_modif|crispy}}
+            <button type="submit" class="btn btn-outline-primary">Modifier mes informations</button>
+        </form>
+
     </div>
 {% else %}
 {% endif %}
@@ -48,6 +55,7 @@ Mon espace
     <h4>Veuillez remplir et nous transmettre votre forumalaire : <a target="_blank" href="{{ chemin_pdf }}"> Télécharger mon formulaire </a> </h4>
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Modifier mes informations :</h1>
+
     </div>
 {% else %}
 {% endif %}

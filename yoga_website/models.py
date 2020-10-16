@@ -56,3 +56,6 @@ class SecretCode(models.Model):
     """SQL table containing the secret code for each user"""
     user = models.OneToOneField(User, on_delete=ChildProcessError)
     code = models.CharField(max_length=254, default=str(random.randint(10000, 100000)))
+
+    def __str__(self):
+        return f"Utilisateur : {self.user.username} / Code secret : {self.code}"

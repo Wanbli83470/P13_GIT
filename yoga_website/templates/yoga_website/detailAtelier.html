@@ -13,14 +13,14 @@
 {% if Places %}
 
     {% if go_inscribe %}
-        <a href="{% url 'inscribe' idatelier idclient %}">
+        <a href="{% url 'inscribe' id_atelier id_client %}">
             <button class="btn btn-lg rounded bg-vert d-inline border border-dark text-white text-center d-block mx-auto btn-lg">Je m'inscris</button>
         </a>
     {% else %} <hr>
         <h1 class="text-muted">Vous êtes déjà inscrit pour cet atelier</h1>
         <hr>
 
-        <a href="{% url 'unsubscribe' idatelier idclient %}">
+        <a href="{% url 'unsubscribe' id_atelier id_client %}">
             <button class="btn btn-lg rounded bg-vert d-inline border border-dark text-white text-center d-block mx-auto btn-lg">Se désinscrire</button>
         </a>
     {% endif %}

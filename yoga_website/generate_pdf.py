@@ -1,7 +1,4 @@
 from reportlab.pdfgen import canvas
-from reportlab.lib.units import cm
-from datetime import datetime as d
-from random import randint
 
 
 def form_adhesion(email, username):

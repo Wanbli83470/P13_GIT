@@ -73,17 +73,18 @@ $(document).ready(function(){
     $("#musicothérapie").fadeToggle(1000);
   });
 
-$("#nav_bar").mouseenter(function(){
-  $(".mr-5").animate({
-    width: '+=10px',
-  });
-});
+    $("#nav_bar").mouseenter(function(){
+      $(".navbar-nav").animate({
+        height: '+=10px',
+      });
+    });
 
-$("#nav_bar").mouseleave(function(){
-  $(".mr-5").animate({
-    width: '-=10px',
-  });
-});
+    $("#nav_bar").mouseleave(function(){
+      $(".navbar-nav").animate({
+        height: '-=10px',
+      });
+    });
+
 
 //Animation de la page Yoga
   $(".js-scrollTo").click(function() {

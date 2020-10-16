@@ -15,9 +15,22 @@ class ClientAdmin(admin.ModelAdmin):
     ordering = ('prenom',)
     search_fields = ('email', 'prenom', 'nom')
 
-admin.site.register(Atelier)
+class InscribeAdmin(admin.ModelAdmin):
+    list_display = ('client', 'atelier')
+    list_filter = ('client',)
+    ordering = ('client',)
+
+class AtelierAdmin(admin.ModelAdmin):
+    list_display = ('type', 'nb_places', 'date', 'lieux')
+    list_filter = ('type',)
+    date_hierarchy = 'date'
+    ordering = ('nb_places',)
+    search_fields = ('type', 'lieux')
+
+
+admin.site.register(Atelier, AtelierAdmin)
 admin.site.register(Client, ClientAdmin)
-admin.site.register(Inscribe)
+admin.site.register(Inscribe, InscribeAdmin)
 admin.site.register(Pdf)
 admin.site.register(SecretCode, SecretAdmin)
 

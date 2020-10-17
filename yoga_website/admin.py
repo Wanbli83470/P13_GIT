@@ -21,7 +21,7 @@ class InscribeAdmin(admin.ModelAdmin):
     ordering = ('client',)
 
 class AtelierAdmin(admin.ModelAdmin):
-    list_display = ('type', 'nb_places', 'date', 'lieux')
+    list_display = ('type', 'nb_places', 'date', 'lieux', 'places')
     list_filter = ('type',)
     date_hierarchy = 'date'
     ordering = ('nb_places',)

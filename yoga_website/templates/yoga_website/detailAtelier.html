@@ -9,8 +9,7 @@
     <h2>Lieux : <strong class="text-vert">{{ atelier.lieux }}</strong></h2><br>
     <h2>Type de séance : <strong class="text-vert">{{ atelier.type }}</strong></h2><br>
     <h2>Date : <strong class="text-vert">{{ atelier.date }}</strong></h2><br>
-
-{% if Places %}
+{% if places %}
 
     {% if go_inscribe %}
         <a href="{% url 'inscribe' id_atelier id_client %}">

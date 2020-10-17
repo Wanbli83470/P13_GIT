@@ -18,12 +18,21 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .generate_pdf import form_adhesion
+from django.http import HttpResponse, Http404
 from django.urls import reverse
 
 
 var_color = "vert"
 admin = False
 mail_soph = os.environ.get("ADRESS_P13_MAIL")
+
+
+def error_404_view(request, exception):
+    return render(request, 'yoga_website/404.html', status=404)
+
+
+def error_500_view(request, *args):
+    return render(request, 'yoga_website/500.html')
 
 
 def user_actif(request):
@@ -109,23 +118,23 @@ def my_espace(request):
                     print(error)
                     print("Echec")
 
-            elif user1 == "client":
-                client = Client.objects.get(user=user)
-                print("ON MODIFIE UN CLIENT")
-                if user_modif.is_valid():
-                    print("form password valide")
-                    username = user_modif.cleaned_data["username"]
-                    adresse_mail = user_modif.cleaned_data["adresse_mail"]
-                    password = user_modif.cleaned_data["password"]
-                    tel = user_modif.cleaned_data["tel"]
-                    """Modif"""
-                    client.tel = tel
-                    client.email = adresse_mail
-                    user.set_password(password)
-                    user.username = username
-                    user.email = adresse_mail
-                    user.save()
-                    client.save()
+        elif user1 == "client":
+            client = Client.objects.get(user=user)
+            print("ON MODIFIE UN CLIENT")
+            if user_modif.is_valid():
+                print("form password valide")
+                username = user_modif.cleaned_data["username"]
+                adresse_mail = user_modif.cleaned_data["adresse_mail"]
+                password = user_modif.cleaned_data["password"]
+                tel = user_modif.cleaned_data["tel"]
+                """Modif"""
+                client.tel = tel
+                client.email = adresse_mail
+                user.set_password(password)
+                user.username = username
+                user.email = adresse_mail
+                user.save()
+                client.save()
 
         else:
             user_modif = UserModif()
@@ -141,6 +150,7 @@ def my_espace(request):
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
         ateliers = Atelier.objects.order_by('date')
         id_ateliers = [i.id for i in ateliers]
+        print(f'client : {client}')
     else:
         pass
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
@@ -302,29 +312,34 @@ def detail_atelier(request, idatelier, idclient):
         id_atelier = idatelier
         id_client = idclient
 
-        atelier = Atelier.objects.get(id=id_atelier)
-        print(atelier)
-        client = Client.objects.get(id=id_client)
-        print(client)
-        nb_participants = Inscribe.objects.filter(atelier=atelier)
-        nb_participants = len(nb_participants)
-        places_restantes = atelier.nb_places - nb_participants
-        places = True
-        if places_restantes == 0:
-            places = False
-        else:
-            places = True
-        go_inscribe = True
         try:
-            go = Inscribe.objects.get(client=client, atelier=atelier)
-            go_inscribe = False
-        except Inscribe.DoesNotExist:
-            go = None
+            atelier = Atelier.objects.get(id=id_atelier)
+            client = Client.objects.get(id=id_client)
+            nb_participants = Inscribe.objects.filter(atelier=atelier)
+            nb_participants = len(nb_participants)
+            places_restantes = atelier.nb_places - nb_participants
+            if places_restantes <= 0:
+                places = False
+            else:
+                places = True
             go_inscribe = True
-        return render(request, 'yoga_website/detailAtelier.html',
-                      {'var_color': var_color, 'admin': admin, 'user1': user1,
-                       'go_inscribe': go_inscribe, 'atelier': atelier, 'id_atelier': id_atelier, 'id_client': id_client,
-                       'nb_participants': nb_participants, 'places_restantes': places_restantes, 'places': places})
+            try:
+                go = Inscribe.objects.get(client=client, atelier=atelier)
+                go_inscribe = False
+            except Inscribe.DoesNotExist:
+                go = None
+                go_inscribe = True
+            print(f"places : {places}")
+            print(f"go_inscribe : {go_inscribe}")
+            return render(request, 'yoga_website/detailAtelier.html',
+                          {'var_color': var_color, 'admin': admin, 'user1': user1,
+                           'go_inscribe': go_inscribe, 'atelier': atelier, 'id_atelier': id_atelier, 'id_client': id_client,
+                           'nb_participants': nb_participants, 'places_restantes': places_restantes, 'places': places})
+
+        except:
+            print("error 404")
+            error_404 = "L'assocation ne trouve pas l'atelier que vous cherchez"
+            return render(request, 'yoga_website/404.html', {'error_404': error_404})
 
     else:
         return redirect('home')
@@ -335,7 +350,14 @@ def participants(request, id_atelier):
     if user1 != "admin":
         return redirect('home')
     id_atelier = id_atelier
-    select_atelier = Atelier.objects.get(id=id_atelier)
+
+    try:
+        select_atelier = Atelier.objects.get(id=id_atelier)
+    except:
+        print("error 404")
+        error_404 = "Atelier introuvable à cet identifiant"
+        return render(request, 'yoga_website/404.html', {'error_404': error_404})
+
     select_participants = Inscribe.objects.filter(atelier=select_atelier)
     nb_participants = len(select_participants)
     places_restantes = select_atelier.nb_places - nb_participants
@@ -379,7 +401,7 @@ def clients(request):
 def inscribe(request, idatelier, idclient):
     user1 = user_actif(request)
     id_atelier = idatelier
-    id_atelier = idclient
+    id_client = idclient
 
     username = str(request.user)
     email = Client.objects.get(id=idclient)
@@ -388,7 +410,7 @@ def inscribe(request, idatelier, idclient):
 
     atelier = Atelier.objects.get(id=id_atelier)
     print(atelier)
-    client = Client.objects.get(id=id_atelier)
+    client = Client.objects.get(id=id_client)
     print(client)
     save = Inscribe(client=client, atelier=atelier)
     save.save()

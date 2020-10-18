@@ -10,6 +10,7 @@ from yoga_website.views import (AtelierListView,
 from. import views
 urlpatterns = [
     path('', views.home, name="home"),
+    path('upload', views.upload_file, name="upload"),
     path('yoga', views.yoga, name="yoga"),
     path('video', views.video, name="video"),
     path('connexion', views.connexion, name="connexion"),

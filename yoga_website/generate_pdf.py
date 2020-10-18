@@ -1,11 +1,11 @@
 from reportlab.pdfgen import canvas
 
 
-def form_adhesion(email, username):
-    pdf = canvas.Canvas(f"yoga_website/formulaire_adhésion_{username}.pdf")
+def generate_pdf(email, username):
+    pdf = canvas.Canvas(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
     pdf.drawString(200, 800, "Formulaire d'adhésion : ")
-    pdf.drawString(150, 770, "Association Melodyoga 1496 quartier des longuettes")
-    pdf.drawString(180, 790, "."*53)
+    pdf.drawString(130, 770, "Association Melodyoga 1496 quartier des longuettes")
+    pdf.drawString(170, 790, "."*53)
     pdf.drawString(50, 680, "Username : {} ".format(username))
 
     pdf.drawString(50, 650, "Prénom : ")

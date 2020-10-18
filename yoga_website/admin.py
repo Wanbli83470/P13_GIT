@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Atelier, Client, Inscribe, Pdf, SecretCode
+from .models import *
 # Register your models here.
 
 class SecretAdmin(admin.ModelAdmin):
@@ -31,6 +31,7 @@ class AtelierAdmin(admin.ModelAdmin):
 admin.site.register(Atelier, AtelierAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Inscribe, InscribeAdmin)
-admin.site.register(Pdf)
+admin.site.register(PdfInput)
+admin.site.register(PdfOutpout)
 admin.site.register(SecretCode, SecretAdmin)
 

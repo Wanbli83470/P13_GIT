@@ -11,16 +11,15 @@ from django.views.generic import (
     CreateView,
     )
 from django.contrib.auth.models import User
-from yoga_website.models import Atelier, Client, Inscribe, Pdf, SecretCode
+from yoga_website.models import Atelier, Client, Inscribe, PdfOutpout, SecretCode, PdfInput
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .generate_pdf import form_adhesion
+from .generate_pdf import generate_pdf
 from django.http import HttpResponse, Http404
 from django.urls import reverse
-
 
 var_color = "vert"
 admin = False
@@ -103,8 +102,17 @@ def my_espace(request):
     user_modif = UserModif()
     user = request.user
     chemin_pdf, registered, client, nb_registered, id_registered, ateliers = None, None, None, None, None, None
+    pdf_input = PdfInput(user=user)
+    pdf_input = pdf_input.pdf_file
+    pdf_send = False
     if user1 != "admin":
         if user1 == "client_not_active":
+            try:
+                pdf_send = PdfOutpout.objects.get(user=user)
+                pdf_send = True
+            except PdfOutpout.DoesNotExist:
+                pdf_send = False
+            print(f"pdf_send :{pdf_send}")
             if request.method == "POST":
                 print("Méthode POST ok")
                 user_modif = UserModif(request.POST)
@@ -140,11 +148,9 @@ def my_espace(request):
             user_modif = UserModif()
 
 
-        """Viewing the PDF form"""
-        Pdf.objects.get_or_create(user=user, chemin_file_pdf="dawa.pdf")
-        #chemin_pdf = "/static/adhésion/Forumulaire_adhésion_Franck899.pdf"
-        chemin_pdf = f"/static/adhésion/Forumulaire_adhésion_{request.user}.pdf"
         """Display of workshops"""
+        chemin_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
+        name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
         registered = Inscribe.objects.filter(client=client)
         nb_registered = len(registered)
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
@@ -154,10 +160,11 @@ def my_espace(request):
     else:
         pass
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
-                                                        'user1': user1, 'chemin_pdf': chemin_pdf,
+                                                        'user1': user1, 'name_pdf': name_pdf,
                                                         'registered': registered, 'client': client,
                                                         'nb_registered': nb_registered, 'id_registered': id_registered,
-                                                        'ateliers': ateliers, 'user_modif': user_modif})
+                                                        'ateliers': ateliers, 'user_modif': user_modif,
+                                                        'pdf_send': pdf_send, 'pdf_input': pdf_input})
 
 
 def registration_valid(request, username, email):
@@ -171,12 +178,12 @@ def registration_valid(request, username, email):
            f"en vous souhaitant une bonne journée"
     email_confirm = EmailMessage(subject, body, adresse_mail, [email])
     email_confirm.content_subtype = "html"
-    email_confirm.attach_file(f"yoga_website/formulaire_adhésion_{username}.pdf")
+    email_confirm.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
     email_confirm.send()
 
     email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
     email_confirm.content_subtype = "html"
-    email_confirm_me.attach_file(f"yoga_website/formulaire_adhésion_{username}.pdf")
+    email_confirm_me.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
     email_confirm_me.send()
     username = str(username)
     return render(request, 'yoga_website/registration_valid.html', {'username': username, 'email': email,
@@ -195,7 +202,7 @@ def register(request):
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             messages.success(request, f'Votre compte {username} est crée')
-            form_adhesion(email=email, username=username)
+            generate_pdf(email=email, username=username)
             return redirect("registrationValid", username=username, email=email)
         else:
             error = True
@@ -614,3 +621,26 @@ def reset_password_step_2(request, username, adresse_mail):
     return render(request, 'yoga_website/reset_password_step.html', {'var_color': var_color, 'admin': admin,
                                                                      'form_password': form_password, 'echec': echec,
                                                                      'utilisateur': utilisateur, "username": username})
+
+
+def upload_file(request):
+    user = request.user
+    print(user)
+    if request.method == 'POST':
+        print("étape 1 : OK")
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            pdf_save = PdfOutpout()
+            print(pdf_save)
+            pdf_save.user = user
+            print(pdf_save.user)
+            pdf_save.pdf_file = request.FILES['pdf_file']
+            print(pdf_save.pdf_file)
+            pdf_save.save()
+            print("Fichier uploadé avec succès")
+            return redirect('home')
+        else:
+            print('échec')
+    else:
+        form = UploadFileForm()
+    return render(request, 'yoga_website/upload.html', {'form': form})

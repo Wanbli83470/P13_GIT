@@ -55,3 +55,7 @@ class UserModif(forms.Form):
     password = forms.CharField(max_length=32, widget=forms.PasswordInput)
     adresse_mail = forms.EmailField(label="Email")
     tel = forms.CharField(label="N°Tél", max_length=10)
+
+
+class UploadFileForm(forms.Form):
+    pdf_file = forms.FileField(label="Ma demande (Format PDF)")

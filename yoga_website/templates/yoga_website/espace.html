@@ -59,7 +59,7 @@ Mon espace
         <h4>Veuillez remplir et nous transmettre votre forumalaire :</h4>
 
         <ul>
-            <li><h4><a download="{{ name_pdf }}" href="{% static 'yoga_website/pdf/{{ name_pdf }}.jpg' %}"> Télécharger mon formulaire </a></h4></li>
+            <li><h4><a href="{% static 'yoga_website/'%}{{ chemin_pdf }} "> Télécharger mon formulaire </a></h4></li>
             <li><h4><a href="{% url 'upload' %}">Envoyer mon formulaire d'adhésion</a></h4></li>
         </ul>
 

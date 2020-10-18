@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
+class PdfAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pdf_file')
+    list_filter = ('user',)
+    ordering = ('user',)
+
 class SecretAdmin(admin.ModelAdmin):
     list_display = ('user', 'code')
     list_filter = ('user', 'code',)
@@ -31,7 +36,7 @@ class AtelierAdmin(admin.ModelAdmin):
 admin.site.register(Atelier, AtelierAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Inscribe, InscribeAdmin)
-admin.site.register(PdfInput)
-admin.site.register(PdfOutpout)
+admin.site.register(PdfInput, PdfAdmin)
+admin.site.register(PdfOutpout, PdfAdmin)
 admin.site.register(SecretCode, SecretAdmin)
 

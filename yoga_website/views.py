@@ -151,6 +151,8 @@ def my_espace(request):
         """Display of workshops"""
         chemin_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
         name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
+        pdf_bdd = PdfInput.objects.get(user=user)
+        pdf_bdd.save()
         registered = Inscribe.objects.filter(client=client)
         nb_registered = len(registered)
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
@@ -160,7 +162,7 @@ def my_espace(request):
     else:
         pass
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
-                                                        'user1': user1, 'name_pdf': name_pdf,
+                                                        'user1': user1, 'name_pdf': name_pdf, 'chemin_pdf': chemin_pdf,
                                                         'registered': registered, 'client': client,
                                                         'nb_registered': nb_registered, 'id_registered': id_registered,
                                                         'ateliers': ateliers, 'user_modif': user_modif,
@@ -203,6 +205,11 @@ def register(request):
             email = form.cleaned_data['email']
             messages.success(request, f'Votre compte {username} est crée')
             generate_pdf(email=email, username=username)
+            user_save = User.objects.get(username=username)
+            pdf_input = PdfInput(user=user_save, pdf_file=f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
+            pdf_input.save()
+            secret_code = SecretCode(user=user_save)
+            secret_code.save()
             return redirect("registrationValid", username=username, email=email)
         else:
             error = True
@@ -470,30 +477,40 @@ def delete_compte(request):
     user = request.user
     user1 = user_actif(request)
 
+    """Supprimer tous les liens avec clef étrangères : """
     try:
+        print("Suppression du code secret")
         scret_code = SecretCode.objects.get(user=user)
         scret_code.delete()
-    except :
+    except SecretCode.DoesNotExist:
         pass
 
+    try:
+        print("Suppression du PDF en entrée")
+        pdf_input = PdfInput.objects.get(user=user)
+        pdf_input.delete()
+    except PdfInput.DoesNotExist:
+        pass
+
+    try:
+        print("Suppression du PDF en sortie")
+        pdf_output = PdfOutpout.objects.get(user=user)
+        pdf_output.delete()
+    except pdf_output.DoesNotExist:
+        pass
+
+    """Supprimer les inscriptions aux ateliers"""
     if user1 == "client":
         compte_delete = Client.objects.get(user=user)
         print("Client actif")
         for i in Inscribe.objects.filter(client=compte_delete):
             print(i.client)
             i.delete()
-
-
-
-        pdf_delete = Pdf.objects.get(user=user)
-        pdf_delete.delete()
         compte_delete.delete()
         user.delete()
 
     else:
         print("Client not active")
-        pdf_delete = Pdf.objects.get(user=user)
-        pdf_delete.delete()
         user.delete()
 
     """Mail de confirmation"""

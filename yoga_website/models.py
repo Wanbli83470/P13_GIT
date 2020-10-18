@@ -9,13 +9,13 @@ import random
 class PdfInput(models.Model):
     """SQL table associating the membership form with the user"""
     user = models.OneToOneField(User, on_delete=ChildProcessError)
-    pdf_file = models.FileField(upload_to='pdf/')
+    pdf_file = models.FileField(upload_to='yoga_website/static/yoga_website/')
 
 
 class PdfOutpout(models.Model):
     """SQL table associating the membership form with the user"""
     user = models.OneToOneField(User, on_delete=ChildProcessError)
-    pdf_file = models.FileField(upload_to='pdf/')
+    pdf_file = models.FileField(upload_to='yoga_website/static/yoga_website/pdf_output/')
 
 
 class Atelier(models.Model):

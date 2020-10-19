@@ -346,19 +346,16 @@ def contact_email(request):
                                                          'admin': admin, 'user1': user1})
 
 
-def inscribe(request, idatelier, idclient):
+def inscribe(request, id_atelier, id_client):
     user1 = user_actif(request)
-    id_atelier = idatelier
-    id_client = idclient
 
     username = str(request.user)
-    email = Client.objects.get(id=idclient)
+    email = Client.objects.get(id=id_client)
     email = email.email
 
     atelier = Atelier.objects.get(id=id_atelier)
     client = Client.objects.get(id=id_client)
-    save = Inscribe(client=client, atelier=atelier)
-    save.save()
+    Inscribe(client=client, atelier=atelier).save()
 
     subject = f"{username} Votre inscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
@@ -369,19 +366,15 @@ def inscribe(request, idatelier, idclient):
     return render(request, 'yoga_website/inscribe.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
-def unsubscribe(request, idatelier, idclient):
+def unsubscribe(request, id_atelier, id_client):
     user1 = user_actif(request)
-    id_atelier = idatelier
-    id_client = idclient
 
     atelier = Atelier.objects.get(id=id_atelier)
     client = Client.objects.get(id=id_client)
-    del_ = Inscribe.objects.get(client=client, atelier=atelier)
-    del_.delete()
+    Inscribe.objects.get(client=client, atelier=atelier).delete()
 
     username = str(request.user)
-    email = Client.objects.get(id=id_client)
-    email = email.email
+    email = client.email
 
     subject = "Votre déinscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
@@ -494,7 +487,6 @@ def reset_password_step_2(request, username, adresse_mail):
         except:
             try:
                 utilisateur = User.objects.get(username=username)
-                secret_entrance = SecretCode.objects.get_or_create(user=utilisateur)
                 secret_entrance = SecretCode.objects.get(user=utilisateur)
                 """Mail contenant le code secret"""
                 subject = "Demande changement du mot de passe sur melodyoga"
@@ -506,7 +498,6 @@ def reset_password_step_2(request, username, adresse_mail):
 
             except:
                 echec = True
-
 
     if request.method == "POST":
         form_password = ResetPasswordStep2(request.POST)
@@ -554,21 +545,18 @@ def delete_compte(request):
 
     """Supprimer tous les liens avec clef étrangères : """
     try:
-        scret_code = SecretCode.objects.get(user=user)
-        scret_code.delete()
+        SecretCode.objects.get(user=user).delete()
     except SecretCode.DoesNotExist:
         pass
 
     try:
-        pdf_input = PdfInput.objects.get(user=user)
-        pdf_input.delete()
+        PdfInput.objects.get(user=user).delete()
     except PdfInput.DoesNotExist:
         pass
 
     try:
-        pdf_output = PdfOutpout.objects.get(user=user)
-        pdf_output.delete()
-    except pdf_output.DoesNotExist:
+        PdfOutpout.objects.get(user=user).delete()
+    except PdfOutpout.DoesNotExist:
         pass
 
     """Supprimer les inscriptions aux ateliers"""

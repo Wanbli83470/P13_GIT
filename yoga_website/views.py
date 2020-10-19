@@ -92,8 +92,6 @@ def ateliers(request):
             participants = [int(l) for l in participants if l.isdecimal()]
 
         ateliers = Atelier.objects.order_by('date')
-        id_ateliers = [i.id for i in ateliers]
-
         if user1 != "admin":
             id_client = get_id_client(request)
         else:
@@ -129,7 +127,6 @@ def participants(request, id_atelier):
     user1 = user_actif(request)
     if user1 != "admin":
         return redirect('home')
-    id_atelier = id_atelier
 
     try:
         select_atelier = Atelier.objects.get(id=id_atelier)
@@ -173,9 +170,7 @@ def clients(request):
 
 def delete_atelier(request, id_atelier):
     user1 = user_actif(request)
-    id_atelier = id_atelier
-    select_atelier = Atelier(id=id_atelier)
-    select_atelier.delete()
+    Atelier(id=id_atelier).delete()
     return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
@@ -195,10 +190,8 @@ def register(request):
             messages.success(request, f'Votre compte {username} est crée')
             generate_pdf(email=email, username=username)
             user_save = User.objects.get(username=username)
-            pdf_input = PdfInput(user=user_save, pdf_file=f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
-            pdf_input.save()
-            secret_code = SecretCode(user=user_save)
-            secret_code.save()
+            PdfInput(user=user_save, pdf_file=f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf").save()
+            SecretCode(user=user_save).save()
             return redirect("registrationValid", username=username, email=email)
         else:
             error = True
@@ -210,6 +203,7 @@ def register(request):
 
 
 def registration_valid(request, username, email):
+
     """HTML confirmation page following a registration"""
     user1 = user_actif(request)
     subject = "Votre inscription sur melodyoga"
@@ -218,15 +212,10 @@ def registration_valid(request, username, email):
            f"Vous trouverez ci-joint un formulaire papier à nous renvoyer signé" \
            f" afin d'enregistrer définitivement votre inscription à notre association " \
            f"en vous souhaitant une bonne journée"
-    email_confirm = EmailMessage(subject, body, adresse_mail, [email])
+    email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.content_subtype = "html"
     email_confirm.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
     email_confirm.send()
-
-    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
-    email_confirm.content_subtype = "html"
-    email_confirm_me.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
-    email_confirm_me.send()
     username = str(username)
     return render(request, 'yoga_website/registration_valid.html', {'username': username, 'email': email,
                                                                     'var_color': var_color,
@@ -331,6 +320,7 @@ def upload_file(request):
             pdf_save.save()
             return redirect('home')
         else:
+            pass
     else:
         form = UploadFileForm()
     return render(request, 'yoga_website/upload.html', {'form': form})
@@ -373,11 +363,9 @@ def inscribe(request, idatelier, idclient):
     subject = f"{username} Votre inscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
     body = f"Bonjour {username} Nous vous confirmons votre inscription pour l'atelier en date du {atelier.date}, en vous souhaitant une bonne journée."
-    email_confirm = EmailMessage(subject, body, adresse_mail, [email])
+    email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.send()
 
-    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
-    email_confirm_me.send()
     return render(request, 'yoga_website/inscribe.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
@@ -399,11 +387,8 @@ def unsubscribe(request, idatelier, idclient):
     adresse_mail = mail_soph
     body = f"Bonjour {username} Nous avons bien noté votre annulation pour l'atelier en date du {atelier.date} " \
            f"et espérons vous revoir prochainement."
-    email_confirm = EmailMessage(subject, body, adresse_mail, [email])
+    email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.send()
-
-    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
-    email_confirm_me.send()
 
     return render(request, 'yoga_website/unsubscribe.html', {'var_color': var_color,
                                                              'admin': admin, 'user1': user1})
@@ -551,6 +536,7 @@ def reset_password_step_2(request, username, adresse_mail):
                 return redirect("home")
 
             else:
+                pass
 
         else:
             error = True
@@ -601,10 +587,8 @@ def delete_compte(request):
     adresse_mail = mail_soph
     body = f"Bonjour {user.username} Nous vous confirmons suppresion de votre compte sur melodyoga, " \
            f"En vous souhaitant une bonne journée"
-    email_confirm = EmailMessage(subject, body, adresse_mail, [user.email])
+    email_confirm = EmailMessage(subject, body, adresse_mail, [user.email, adresse_mail])
     email_confirm.send()
 
-    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
-    email_confirm_me.send()
 
     return redirect('home')

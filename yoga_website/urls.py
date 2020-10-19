@@ -33,7 +33,7 @@ urlpatterns = [
     path('new-atelier/', CreateAteliersView.as_view(), name="create-atelier"),
     path('registrationValid/<str:username>/<str:email>',
          views.registration_valid, name="registrationValid"),
-    path('deleteAtelier/<int:idAtelier>', views.delete_atelier, name="deleteAtelier"),
+    path('deleteAtelier/<int:id_atelier>', views.delete_atelier, name="deleteAtelier"),
     path('delete_compte', views.delete_compte, name="delete_compte"),
     path('resetPassword', views.reset_password, name="reset_password"),
     path('resetPasswordStep/<str:username>/<str:adresse_mail>',

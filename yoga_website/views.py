@@ -32,23 +32,19 @@ mail_soph = os.environ.get("ADRESS_P13_MAIL")
 def user_actif(request):
     list_client = []
     for c in Client.objects.all():
-        print(c.user)
         list_client.append(str(c.user))
 
-    print(list_client)
     global var_color
     global admin
     mon_user = str(request.user)
     user = str
     if mon_user == "thomas":
-        print("admin connecté")
         var_color = "violet"
         admin = True
         user1 = "admin"
     elif mon_user in list_client:
         var_color = "vert"
         user1 = "client"
-        print(">>> Client enregistré et validé : {}".format(mon_user))
         admin = False
     elif mon_user not in list_client and mon_user is not "AnonymousUser" :
         user1 = "client_not_active"
@@ -61,7 +57,6 @@ def user_actif(request):
 
 def home(request):
     user1 = user_actif(request)
-    print(user1)
     return render(request, "yoga_website/bienvenu.html", {'phrase_du_jour': phrase_du_jour,
                                                           'var_color': var_color, 'admin': admin, 'user1': user1})
 
@@ -95,11 +90,9 @@ def ateliers(request):
             client = Client.objects.get(user=user)
             participants = str(Inscribe.objects.filter(client=client))
             participants = [int(l) for l in participants if l.isdecimal()]
-            print(participants)
 
         ateliers = Atelier.objects.order_by('date')
         id_ateliers = [i.id for i in ateliers]
-        print(id_ateliers)
 
         if user1 != "admin":
             id_client = get_id_client(request)
@@ -141,15 +134,12 @@ def participants(request, id_atelier):
     try:
         select_atelier = Atelier.objects.get(id=id_atelier)
     except:
-        print("error 404")
         error_404 = "Atelier introuvable à cet identifiant"
         return render(request, 'yoga_website/404.html', {'error_404': error_404})
 
     select_participants = Inscribe.objects.filter(atelier=select_atelier)
     nb_participants = len(select_participants)
     places_restantes = select_atelier.nb_places - nb_participants
-    print(select_atelier)
-    print(select_participants)
     return render(request, 'yoga_website/participants.html', {'var_color': var_color, 'admin': admin, 'user1': user1,
                                                               'id_atelier': id_atelier,
                                                               "select_participants": select_participants,
@@ -174,8 +164,6 @@ def clients(request):
             return redirect('clients')
         else:
             error = True
-            print(error)
-            print("Echec")
     else:
         form = ClientsForm(request.POST)
 
@@ -214,8 +202,6 @@ def register(request):
             return redirect("registrationValid", username=username, email=email)
         else:
             error = True
-            print(error)
-            print("Echec")
     else:
         form = RegistrationForm(request.POST)
 
@@ -285,25 +271,18 @@ def my_espace(request):
                 pdf_send = True
             except PdfOutpout.DoesNotExist:
                 pdf_send = False
-            print(f"pdf_send :{pdf_send}")
             if request.method == "POST":
-                print("Méthode POST ok")
                 user_modif = UserModif(request.POST)
                 if user_modif.is_valid():
-                    print("form password valide")
                     username = user_modif.cleaned_data["username"]
                     adresse_mail = user_modif.cleaned_data["adresse_mail"]
                     password = user_modif.cleaned_data["password"]
                 else:
                     error = True
-                    print(error)
-                    print("Echec")
 
         elif user1 == "client":
             client = Client.objects.get(user=user)
-            print("ON MODIFIE UN CLIENT")
             if user_modif.is_valid():
-                print("form password valide")
                 username = user_modif.cleaned_data["username"]
                 adresse_mail = user_modif.cleaned_data["adresse_mail"]
                 password = user_modif.cleaned_data["password"]
@@ -331,7 +310,6 @@ def my_espace(request):
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
         ateliers = Atelier.objects.order_by('date')
         id_ateliers = [i.id for i in ateliers]
-        print(f'client : {client}')
     else:
         pass
     return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
@@ -344,22 +322,15 @@ def my_espace(request):
 
 def upload_file(request):
     user = request.user
-    print(user)
     if request.method == 'POST':
-        print("étape 1 : OK")
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             pdf_save = PdfOutpout()
-            print(pdf_save)
             pdf_save.user = user
-            print(pdf_save.user)
             pdf_save.pdf_file = request.FILES['pdf_file']
-            print(pdf_save.pdf_file)
             pdf_save.save()
-            print("Fichier uploadé avec succès")
             return redirect('home')
         else:
-            print('échec')
     else:
         form = UploadFileForm()
     return render(request, 'yoga_website/upload.html', {'form': form})
@@ -367,24 +338,18 @@ def upload_file(request):
 
 def contact_email(request):
     user1 = user_actif(request)
-    print("vue mail")
     form_class = MailForm
     mail_form = form_class(request.POST or None)
 
     if request.method == "POST":
-        print("Méthode POST ok")
 
         if mail_form.is_valid():
-            print("form MAIL valide")
             subject = mail_form.cleaned_data["subject"]
             adresse_mail = mail_form.cleaned_data["adresse_mail"]
             body = mail_form.cleaned_data["body"] + " " + adresse_mail
             email = EmailMessage("Melodyoga : " + subject, body, mail_soph, [mail_soph])
-            print(subject, body)
-            print(email)
 
             email.send()
-            print("mail envoyé")
             return redirect('/home')
 
     return render(request, 'yoga_website/contact.html', {'mail_form': mail_form, 'var_color': var_color,
@@ -399,12 +364,9 @@ def inscribe(request, idatelier, idclient):
     username = str(request.user)
     email = Client.objects.get(id=idclient)
     email = email.email
-    print(email)
 
     atelier = Atelier.objects.get(id=id_atelier)
-    print(atelier)
     client = Client.objects.get(id=id_client)
-    print(client)
     save = Inscribe(client=client, atelier=atelier)
     save.save()
 
@@ -425,16 +387,13 @@ def unsubscribe(request, idatelier, idclient):
     id_client = idclient
 
     atelier = Atelier.objects.get(id=id_atelier)
-    print(atelier)
     client = Client.objects.get(id=id_client)
-    print(client)
     del_ = Inscribe.objects.get(client=client, atelier=atelier)
     del_.delete()
 
     username = str(request.user)
     email = Client.objects.get(id=id_client)
     email = email.email
-    print(email)
 
     subject = "Votre déinscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
@@ -476,15 +435,12 @@ def detail_atelier(request, idatelier, idclient):
             except Inscribe.DoesNotExist:
                 go = None
                 go_inscribe = True
-            print(f"places : {places}")
-            print(f"go_inscribe : {go_inscribe}")
             return render(request, 'yoga_website/detailAtelier.html',
                           {'var_color': var_color, 'admin': admin, 'user1': user1,
                            'go_inscribe': go_inscribe, 'atelier': atelier, 'id_atelier': id_atelier, 'id_client': id_client,
                            'nb_participants': nb_participants, 'places_restantes': places_restantes, 'places': places})
 
         except:
-            print("error 404")
             error_404 = "L'assocation ne trouve pas l'atelier que vous cherchez"
             return render(request, 'yoga_website/404.html', {'error_404': error_404})
 
@@ -511,23 +467,18 @@ def deconnexion(request):
 def reset_password(request):
 
     if request.method == "POST":
-        print("Méthode POST ok")
         form_password = ResetPassword(request.POST)
 
         if form_password.is_valid():
-            print("form password valide")
             username = form_password.cleaned_data["username"]
             adresse_mail = form_password.cleaned_data["adresse_mail"]
             if username == "":
                 username = "null"
             if adresse_mail == "":
                 adresse_mail = "null"
-            print(username, adresse_mail)
             return redirect("resset_password_step", username=username, adresse_mail=adresse_mail,)
         else:
             error = True
-            print(error)
-            print("Echec")
     else:
         form_password = ResetPassword()
 
@@ -571,27 +522,19 @@ def reset_password_step_2(request, username, adresse_mail):
             except:
                 echec = True
 
-    print(echec)
 
     if request.method == "POST":
-        print("Méthode POST ok")
         form_password = ResetPasswordStep2(request.POST)
 
         if form_password.is_valid():
-            print("form password valide")
             code = form_password.cleaned_data["code"]
             password = str(form_password.cleaned_data["password"])
-            print(code, str(secret_entrance.code))
 
             if str(code) == str(secret_entrance.code):
-                print("Changement du password autorisé ! ")
                 utilisateur.set_password(password)
                 utilisateur.save()
-                print(utilisateur)
-                print(utilisateur.password)
                 """On attribue un nouveau code secret pour l'avenir"""
                 code_secret = str(random.randint(10000, 100000))
-                print("code généré : " + code_secret)
                 secret_entrance = SecretCode.objects.get(user=utilisateur)
                 secret_entrance.code = str(code_secret)
                 secret_entrance.save()
@@ -608,11 +551,9 @@ def reset_password_step_2(request, username, adresse_mail):
                 return redirect("home")
 
             else:
-                print("Changement de passward non autorisé")
 
         else:
             error = True
-            print(error)
     else:
         form_password = ResetPasswordStep2()
 
@@ -627,21 +568,18 @@ def delete_compte(request):
 
     """Supprimer tous les liens avec clef étrangères : """
     try:
-        print("Suppression du code secret")
         scret_code = SecretCode.objects.get(user=user)
         scret_code.delete()
     except SecretCode.DoesNotExist:
         pass
 
     try:
-        print("Suppression du PDF en entrée")
         pdf_input = PdfInput.objects.get(user=user)
         pdf_input.delete()
     except PdfInput.DoesNotExist:
         pass
 
     try:
-        print("Suppression du PDF en sortie")
         pdf_output = PdfOutpout.objects.get(user=user)
         pdf_output.delete()
     except pdf_output.DoesNotExist:
@@ -650,15 +588,12 @@ def delete_compte(request):
     """Supprimer les inscriptions aux ateliers"""
     if user1 == "client":
         compte_delete = Client.objects.get(user=user)
-        print("Client actif")
         for i in Inscribe.objects.filter(client=compte_delete):
-            print(i.client)
             i.delete()
         compte_delete.delete()
         user.delete()
 
     else:
-        print("Client not active")
         user.delete()
 
     """Mail de confirmation"""

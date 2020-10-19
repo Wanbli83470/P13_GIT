@@ -1,0 +1,27 @@
+{% extends 'yoga_website/bienvenu.html' %}
+{% block title %} Erreur 404 {% endblock %}
+{% block content %}
+
+
+<script>
+    setTimeout(function(){
+        window.location.href = '{% url 'home' %}';
+    }, 3000);
+</script>
+
+
+<div class="container-fluid p-3 text-white text-center">
+    <div class="shadow-lg p-4 mb-4 rounded" style="background-image: radial-gradient(circle at center, #7f9e29, #F4FFC8)";>
+        <h1>
+            Notre serveur ne vous trouve plus !
+        </h1>
+        <hr>
+        <br>
+        <h2>
+            Pas de soucis vous allez être redirigé vers notre accueil...
+        </h2>
+    </div>
+</div>
+
+
+{% endblock content %}

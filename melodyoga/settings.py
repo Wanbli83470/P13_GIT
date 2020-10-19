@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'yoga_website.apps.YogaWebsiteConfig',
     'crispy_forms',
+    'content_static',
+    'administration',
+    'user_experience'
 ]
 
 MIDDLEWARE = [

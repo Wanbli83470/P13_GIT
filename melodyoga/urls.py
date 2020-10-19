@@ -21,5 +21,8 @@ handler500 = 'yoga_website.views.error_500_view'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('yoga_website.urls')),
+    path('', include('content_static.urls')),
+    path('', include('administration.urls')),
+    path('', include('user_experience.urls')),
 ]
 

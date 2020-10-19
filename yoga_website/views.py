@@ -61,25 +61,6 @@ def home(request):
                                                           'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
-def yoga(request):
-    user1 = user_actif(request)
-    return render(request, "yoga_website/yoga.html", {'var_color': var_color,
-                                                      'admin': admin, 'user1': user1})
-
-
-def nidra(request):
-    user1 = user_actif(request)
-    return render(request, "yoga_website/nidra.html", {'video': video, 'var_color': var_color,
-                                                       'user1': user1})
-
-
-def video(request):
-    user1 = user_actif(request)
-    video = True
-    return render(request, "yoga_website/vidéo.html", {'video': video, 'var_color': var_color,
-                                                       'admin': admin, 'user1': user1})
-
-
 def ateliers(request):
     """View all workshops : administrator view and user view"""
     if user_actif(request) != "client_not_active":

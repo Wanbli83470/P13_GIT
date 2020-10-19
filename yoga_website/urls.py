@@ -9,8 +9,6 @@ from. import views
 urlpatterns = [
     path('', views.home, name="home"),
     path('upload', views.upload_file, name="upload"),
-    path('yoga', views.yoga, name="yoga"),
-    path('video', views.video, name="video"),
     path('connexion', views.connexion, name="connexion"),
     path('deconnexion', views.deconnexion, name="deconnexion"),
     path('inscription', views.register, name="inscription"),
@@ -21,7 +19,6 @@ urlpatterns = [
     path('register', views.register, name="register"),
     path('espace', views.my_espace, name="espace"),
     path('clients', views.clients, name="clients"),
-    path('nidra', views.nidra, name="nidra"),
     path('participants/<int:id_atelier>', views.participants, name="participants"),
     path('test', AtelierListView.as_view(), name="test"),
     path('inscribe/<int:id_atelier>/<int:id_client>',

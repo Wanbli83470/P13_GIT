@@ -26,12 +26,7 @@ admin = False
 mail_soph = os.environ.get("ADRESS_P13_MAIL")
 
 
-def error_404_view(request, exception):
-    return render(request, 'yoga_website/404.html', status=404)
-
-
-def error_500_view(request, *args):
-    return render(request, 'yoga_website/500.html')
+"""Common functions"""
 
 
 def user_actif(request):
@@ -64,12 +59,6 @@ def user_actif(request):
     return user1
 
 
-def get_id_client(request):
-    username = request.user
-    client = Client.objects.get(user=username)
-    return client.id
-
-
 def home(request):
     user1 = user_actif(request)
     print(user1)
@@ -94,6 +83,190 @@ def video(request):
     video = True
     return render(request, "yoga_website/vidéo.html", {'video': video, 'var_color': var_color,
                                                        'admin': admin, 'user1': user1})
+
+
+def ateliers(request):
+    """View all workshops : administrator view and user view"""
+    if user_actif(request) != "client_not_active":
+        user1 = user_actif(request)
+        user = request.user
+        participants = str
+        if user1 == "client":
+            client = Client.objects.get(user=user)
+            participants = str(Inscribe.objects.filter(client=client))
+            participants = [int(l) for l in participants if l.isdecimal()]
+            print(participants)
+
+        ateliers = Atelier.objects.order_by('date')
+        id_ateliers = [i.id for i in ateliers]
+        print(id_ateliers)
+
+        if user1 != "admin":
+            id_client = get_id_client(request)
+        else:
+            id_client = 0
+        return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin,
+                                                              'user1': user1, 'id_client': id_client,
+                                                              'participants': participants})
+    else:
+        return redirect("home")
+
+
+"""HTTP request errors function"""
+
+
+def error_404_view(request, exception):
+    return render(request, 'yoga_website/404.html', status=404)
+
+
+def error_500_view(request, *args):
+    return render(request, 'yoga_website/500.html')
+
+
+"""Administrator's function"""
+
+
+def get_id_client(request):
+    username = request.user
+    client = Client.objects.get(user=username)
+    return client.id
+
+
+def participants(request, id_atelier):
+    user1 = user_actif(request)
+    if user1 != "admin":
+        return redirect('home')
+    id_atelier = id_atelier
+
+    try:
+        select_atelier = Atelier.objects.get(id=id_atelier)
+    except:
+        print("error 404")
+        error_404 = "Atelier introuvable à cet identifiant"
+        return render(request, 'yoga_website/404.html', {'error_404': error_404})
+
+    select_participants = Inscribe.objects.filter(atelier=select_atelier)
+    nb_participants = len(select_participants)
+    places_restantes = select_atelier.nb_places - nb_participants
+    print(select_atelier)
+    print(select_participants)
+    return render(request, 'yoga_website/participants.html', {'var_color': var_color, 'admin': admin, 'user1': user1,
+                                                              'id_atelier': id_atelier,
+                                                              "select_participants": select_participants,
+                                                              "select_atelier": select_atelier,
+                                                              'places_restantes': places_restantes,
+                                                              'nb_participants': nb_participants})
+
+
+class CreateAteliersView(LoginRequiredMixin, CreateView):
+    model = Atelier
+    fields = ['type', 'nb_places', 'date', 'lieux', 'places']
+    template_name = 'yoga_website/atelier_form.html'
+
+
+def clients(request):
+    user1 = user_actif(request)
+    client = Client.objects.all()
+    if request.method == "POST":
+        form = ClientsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('clients')
+        else:
+            error = True
+            print(error)
+            print("Echec")
+    else:
+        form = ClientsForm(request.POST)
+
+    return render(request, 'yoga_website/clients.html', {"client": client, "form": form, 'var_color': var_color,
+                                                         'admin': admin, 'user1': user1})
+
+
+def delete_atelier(request, id_atelier):
+    user1 = user_actif(request)
+    id_atelier = id_atelier
+    select_atelier = Atelier(id=id_atelier)
+    select_atelier.delete()
+    return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
+
+
+"""User function"""
+
+
+def register(request):
+    """Registration page for new users"""
+    user1 = user_actif(request)
+    error = False
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            messages.success(request, f'Votre compte {username} est crée')
+            generate_pdf(email=email, username=username)
+            user_save = User.objects.get(username=username)
+            pdf_input = PdfInput(user=user_save, pdf_file=f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
+            pdf_input.save()
+            secret_code = SecretCode(user=user_save)
+            secret_code.save()
+            return redirect("registrationValid", username=username, email=email)
+        else:
+            error = True
+            print(error)
+            print("Echec")
+    else:
+        form = RegistrationForm(request.POST)
+
+    return render(request, 'yoga_website/register.html', {'form': form, 'var_color': var_color,
+                                                          'admin': admin, 'user1': user1})
+
+
+def registration_valid(request, username, email):
+    """HTML confirmation page following a registration"""
+    user1 = user_actif(request)
+    subject = "Votre inscription sur melodyoga"
+    adresse_mail = mail_soph
+    body = f"Bonjour {username} Nous vous confirmons votre inscription sur Melodyoga, " \
+           f"Vous trouverez ci-joint un formulaire papier à nous renvoyer signé" \
+           f" afin d'enregistrer définitivement votre inscription à notre association " \
+           f"en vous souhaitant une bonne journée"
+    email_confirm = EmailMessage(subject, body, adresse_mail, [email])
+    email_confirm.content_subtype = "html"
+    email_confirm.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
+    email_confirm.send()
+
+    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
+    email_confirm.content_subtype = "html"
+    email_confirm_me.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
+    email_confirm_me.send()
+    username = str(username)
+    return render(request, 'yoga_website/registration_valid.html', {'username': username, 'email': email,
+                                                                    'var_color': var_color,
+                                                                    'admin': admin, 'user1': user1})
+
+
+def connexion(request):
+    user1 = user_actif(request)
+    error = False
+
+    if request.method == "POST":
+        form = ConnexionForm(request.POST or None)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(username=username, password=password)  # Nous vérifions si les données sont correctes
+            if user:  # Si l'objet renvoyé n'est pas None
+                login(request, user)  # nous connectons l'utilisateur
+                return redirect('/')
+            else:  # sinon une erreur sera affichée
+                error = True
+    else:
+        form = ConnexionForm()
+
+    return render(request, 'yoga_website/connect.html', {'form': form, 'error': error, 'var_color': var_color,
+                                                         'admin': admin, 'user1': user1})
 
 
 def my_espace(request):
@@ -169,79 +342,27 @@ def my_espace(request):
                                                         'pdf_send': pdf_send, 'pdf_input': pdf_input})
 
 
-def registration_valid(request, username, email):
-    """HTML confirmation page following a registration"""
-    user1 = user_actif(request)
-    subject = "Votre inscription sur melodyoga"
-    adresse_mail = mail_soph
-    body = f"Bonjour {username} Nous vous confirmons votre inscription sur Melodyoga, " \
-           f"Vous trouverez ci-joint un formulaire papier à nous renvoyer signé" \
-           f" afin d'enregistrer définitivement votre inscription à notre association " \
-           f"en vous souhaitant une bonne journée"
-    email_confirm = EmailMessage(subject, body, adresse_mail, [email])
-    email_confirm.content_subtype = "html"
-    email_confirm.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
-    email_confirm.send()
-
-    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
-    email_confirm.content_subtype = "html"
-    email_confirm_me.attach_file(f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
-    email_confirm_me.send()
-    username = str(username)
-    return render(request, 'yoga_website/registration_valid.html', {'username': username, 'email': email,
-                                                                    'var_color': var_color,
-                                                                    'admin': admin, 'user1': user1})
-
-
-def register(request):
-    """Registration page for new users"""
-    user1 = user_actif(request)
-    error = False
+def upload_file(request):
+    user = request.user
+    print(user)
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        print("étape 1 : OK")
+        form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            messages.success(request, f'Votre compte {username} est crée')
-            generate_pdf(email=email, username=username)
-            user_save = User.objects.get(username=username)
-            pdf_input = PdfInput(user=user_save, pdf_file=f"yoga_website/static/yoga_website/formulaire_adhésion_{username}.pdf")
-            pdf_input.save()
-            secret_code = SecretCode(user=user_save)
-            secret_code.save()
-            return redirect("registrationValid", username=username, email=email)
+            pdf_save = PdfOutpout()
+            print(pdf_save)
+            pdf_save.user = user
+            print(pdf_save.user)
+            pdf_save.pdf_file = request.FILES['pdf_file']
+            print(pdf_save.pdf_file)
+            pdf_save.save()
+            print("Fichier uploadé avec succès")
+            return redirect('home')
         else:
-            error = True
-            print(error)
-            print("Echec")
+            print('échec')
     else:
-        form = RegistrationForm(request.POST)
-
-    return render(request, 'yoga_website/register.html', {'form': form, 'var_color': var_color,
-                                                          'admin': admin, 'user1': user1})
-
-
-def connexion(request):
-    user1 = user_actif(request)
-    error = False
-
-    if request.method == "POST":
-        form = ConnexionForm(request.POST or None)
-        if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(username=username, password=password)  # Nous vérifions si les données sont correctes
-            if user:  # Si l'objet renvoyé n'est pas None
-                login(request, user)  # nous connectons l'utilisateur
-                return redirect('/')
-            else:  # sinon une erreur sera affichée
-                error = True
-    else:
-        form = ConnexionForm()
-
-    return render(request, 'yoga_website/connect.html', {'form': form, 'error': error, 'var_color': var_color,
-                                                         'admin': admin, 'user1': user1})
+        form = UploadFileForm()
+    return render(request, 'yoga_website/upload.html', {'form': form})
 
 
 def contact_email(request):
@@ -267,148 +388,6 @@ def contact_email(request):
             return redirect('/home')
 
     return render(request, 'yoga_website/contact.html', {'mail_form': mail_form, 'var_color': var_color,
-                                                         'admin': admin, 'user1': user1})
-
-
-def deconnexion(request):
-    user1 = user_actif(request)
-    global var_color
-    global admin
-    logout(request)
-    var_color = "vert"
-    admin = False
-    return redirect('home')
-
-
-class AtelierListView(ListView):
-    model = Atelier
-    template_name = 'yoga_website/ateliers.html'
-    context_object_name = "ateliers"
-
-
-class CreateAteliersView(LoginRequiredMixin, CreateView):
-    model = Atelier
-    fields = ['type', 'nb_places', 'date', 'lieux', 'places']
-    template_name = 'yoga_website/atelier_form.html'
-
-
-def ateliers(request):
-    """View all workshops : administrator view and user view"""
-    if user_actif(request) != "client_not_active":
-        user1 = user_actif(request)
-        user = request.user
-        participants = str
-        if user1 == "client":
-            client = Client.objects.get(user=user)
-            participants = str(Inscribe.objects.filter(client=client))
-            participants = [int(l) for l in participants if l.isdecimal()]
-            print(participants)
-
-        ateliers = Atelier.objects.order_by('date')
-        id_ateliers = [i.id for i in ateliers]
-        print(id_ateliers)
-
-        if user1 != "admin":
-            id_client = get_id_client(request)
-        else:
-            id_client = 0
-        return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin,
-                                                              'user1': user1, 'id_client': id_client,
-                                                              'participants': participants})
-    else :
-        return redirect("home")
-
-
-def detail_atelier(request, idatelier, idclient):
-    """Show workshop details and manage registration"""
-    if user_actif(request) == "client":
-        user1 = user_actif(request)
-        id_atelier = idatelier
-        id_client = idclient
-
-        try:
-            atelier = Atelier.objects.get(id=id_atelier)
-            client = Client.objects.get(id=id_client)
-            nb_participants = Inscribe.objects.filter(atelier=atelier)
-            nb_participants = len(nb_participants)
-            places_restantes = atelier.nb_places - nb_participants
-            if places_restantes <= 0:
-                places = False
-            else:
-                places = True
-            go_inscribe = True
-            try:
-                go = Inscribe.objects.get(client=client, atelier=atelier)
-                go_inscribe = False
-            except Inscribe.DoesNotExist:
-                go = None
-                go_inscribe = True
-            print(f"places : {places}")
-            print(f"go_inscribe : {go_inscribe}")
-            return render(request, 'yoga_website/detailAtelier.html',
-                          {'var_color': var_color, 'admin': admin, 'user1': user1,
-                           'go_inscribe': go_inscribe, 'atelier': atelier, 'id_atelier': id_atelier, 'id_client': id_client,
-                           'nb_participants': nb_participants, 'places_restantes': places_restantes, 'places': places})
-
-        except:
-            print("error 404")
-            error_404 = "L'assocation ne trouve pas l'atelier que vous cherchez"
-            return render(request, 'yoga_website/404.html', {'error_404': error_404})
-
-    else:
-        return redirect('home')
-
-
-def participants(request, id_atelier):
-    user1 = user_actif(request)
-    if user1 != "admin":
-        return redirect('home')
-    id_atelier = id_atelier
-
-    try:
-        select_atelier = Atelier.objects.get(id=id_atelier)
-    except:
-        print("error 404")
-        error_404 = "Atelier introuvable à cet identifiant"
-        return render(request, 'yoga_website/404.html', {'error_404': error_404})
-
-    select_participants = Inscribe.objects.filter(atelier=select_atelier)
-    nb_participants = len(select_participants)
-    places_restantes = select_atelier.nb_places - nb_participants
-    print(select_atelier)
-    print(select_participants)
-    return render(request, 'yoga_website/participants.html', {'var_color': var_color, 'admin': admin, 'user1': user1,
-                                                              'id_atelier': id_atelier,
-                                                              "select_participants": select_participants,
-                                                              "select_atelier": select_atelier,
-                                                              'places_restantes': places_restantes,
-                                                              'nb_participants': nb_participants})
-
-
-def delete_atelier(request, id_atelier):
-    user1 = user_actif(request)
-    id_atelier = id_atelier
-    select_atelier = Atelier(id=id_atelier)
-    select_atelier.delete()
-    return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
-
-
-def clients(request):
-    user1 = user_actif(request)
-    client = Client.objects.all()
-    if request.method == "POST":
-        form = ClientsForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('clients')
-        else:
-            error = True
-            print(error)
-            print("Echec")
-    else:
-        form = ClientsForm(request.POST)
-
-    return render(request, 'yoga_website/clients.html', {"client": client, "form": form, 'var_color': var_color,
                                                          'admin': admin, 'user1': user1})
 
 
@@ -473,57 +452,59 @@ def unsubscribe(request, idatelier, idclient):
     return redirect('home')
 
 
-def delete_compte(request):
-    user = request.user
-    user1 = user_actif(request)
+def detail_atelier(request, idatelier, idclient):
+    """Show workshop details and manage registration"""
+    if user_actif(request) == "client":
+        user1 = user_actif(request)
+        id_atelier = idatelier
+        id_client = idclient
 
-    """Supprimer tous les liens avec clef étrangères : """
-    try:
-        print("Suppression du code secret")
-        scret_code = SecretCode.objects.get(user=user)
-        scret_code.delete()
-    except SecretCode.DoesNotExist:
-        pass
+        try:
+            atelier = Atelier.objects.get(id=id_atelier)
+            client = Client.objects.get(id=id_client)
+            nb_participants = Inscribe.objects.filter(atelier=atelier)
+            nb_participants = len(nb_participants)
+            places_restantes = atelier.nb_places - nb_participants
+            if places_restantes <= 0:
+                places = False
+            else:
+                places = True
+            go_inscribe = True
+            try:
+                go = Inscribe.objects.get(client=client, atelier=atelier)
+                go_inscribe = False
+            except Inscribe.DoesNotExist:
+                go = None
+                go_inscribe = True
+            print(f"places : {places}")
+            print(f"go_inscribe : {go_inscribe}")
+            return render(request, 'yoga_website/detailAtelier.html',
+                          {'var_color': var_color, 'admin': admin, 'user1': user1,
+                           'go_inscribe': go_inscribe, 'atelier': atelier, 'id_atelier': id_atelier, 'id_client': id_client,
+                           'nb_participants': nb_participants, 'places_restantes': places_restantes, 'places': places})
 
-    try:
-        print("Suppression du PDF en entrée")
-        pdf_input = PdfInput.objects.get(user=user)
-        pdf_input.delete()
-    except PdfInput.DoesNotExist:
-        pass
-
-    try:
-        print("Suppression du PDF en sortie")
-        pdf_output = PdfOutpout.objects.get(user=user)
-        pdf_output.delete()
-    except pdf_output.DoesNotExist:
-        pass
-
-    """Supprimer les inscriptions aux ateliers"""
-    if user1 == "client":
-        compte_delete = Client.objects.get(user=user)
-        print("Client actif")
-        for i in Inscribe.objects.filter(client=compte_delete):
-            print(i.client)
-            i.delete()
-        compte_delete.delete()
-        user.delete()
+        except:
+            print("error 404")
+            error_404 = "L'assocation ne trouve pas l'atelier que vous cherchez"
+            return render(request, 'yoga_website/404.html', {'error_404': error_404})
 
     else:
-        print("Client not active")
-        user.delete()
+        return redirect('home')
 
-    """Mail de confirmation"""
-    subject = "Suppresion de votre compte sur melodyoga"
-    adresse_mail = mail_soph
-    body = f"Bonjour {user.username} Nous vous confirmons suppresion de votre compte sur melodyoga, " \
-           f"En vous souhaitant une bonne journée"
-    email_confirm = EmailMessage(subject, body, adresse_mail, [user.email])
-    email_confirm.send()
 
-    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
-    email_confirm_me.send()
+class AtelierListView(ListView):
+    model = Atelier
+    template_name = 'yoga_website/ateliers.html'
+    context_object_name = "ateliers"
 
+
+def deconnexion(request):
+    user1 = user_actif(request)
+    global var_color
+    global admin
+    logout(request)
+    var_color = "vert"
+    admin = False
     return redirect('home')
 
 
@@ -640,24 +621,55 @@ def reset_password_step_2(request, username, adresse_mail):
                                                                      'utilisateur': utilisateur, "username": username})
 
 
-def upload_file(request):
+def delete_compte(request):
     user = request.user
-    print(user)
-    if request.method == 'POST':
-        print("étape 1 : OK")
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            pdf_save = PdfOutpout()
-            print(pdf_save)
-            pdf_save.user = user
-            print(pdf_save.user)
-            pdf_save.pdf_file = request.FILES['pdf_file']
-            print(pdf_save.pdf_file)
-            pdf_save.save()
-            print("Fichier uploadé avec succès")
-            return redirect('home')
-        else:
-            print('échec')
+    user1 = user_actif(request)
+
+    """Supprimer tous les liens avec clef étrangères : """
+    try:
+        print("Suppression du code secret")
+        scret_code = SecretCode.objects.get(user=user)
+        scret_code.delete()
+    except SecretCode.DoesNotExist:
+        pass
+
+    try:
+        print("Suppression du PDF en entrée")
+        pdf_input = PdfInput.objects.get(user=user)
+        pdf_input.delete()
+    except PdfInput.DoesNotExist:
+        pass
+
+    try:
+        print("Suppression du PDF en sortie")
+        pdf_output = PdfOutpout.objects.get(user=user)
+        pdf_output.delete()
+    except pdf_output.DoesNotExist:
+        pass
+
+    """Supprimer les inscriptions aux ateliers"""
+    if user1 == "client":
+        compte_delete = Client.objects.get(user=user)
+        print("Client actif")
+        for i in Inscribe.objects.filter(client=compte_delete):
+            print(i.client)
+            i.delete()
+        compte_delete.delete()
+        user.delete()
+
     else:
-        form = UploadFileForm()
-    return render(request, 'yoga_website/upload.html', {'form': form})
+        print("Client not active")
+        user.delete()
+
+    """Mail de confirmation"""
+    subject = "Suppresion de votre compte sur melodyoga"
+    adresse_mail = mail_soph
+    body = f"Bonjour {user.username} Nous vous confirmons suppresion de votre compte sur melodyoga, " \
+           f"En vous souhaitant une bonne journée"
+    email_confirm = EmailMessage(subject, body, adresse_mail, [user.email])
+    email_confirm.send()
+
+    email_confirm_me = EmailMessage(subject, body, adresse_mail, [adresse_mail])
+    email_confirm_me.send()
+
+    return redirect('home')

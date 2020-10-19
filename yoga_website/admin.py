@@ -37,6 +37,6 @@ admin.site.register(Atelier, AtelierAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Inscribe, InscribeAdmin)
 admin.site.register(PdfInput, PdfAdmin)
-admin.site.register(PdfOutpout, PdfAdmin)
+admin.site.register(PdfOutput, PdfAdmin)
 admin.site.register(SecretCode, SecretAdmin)
 

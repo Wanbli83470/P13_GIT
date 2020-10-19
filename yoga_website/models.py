@@ -2,8 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
-# Create your models here.
 import random
+# Create your models here.
 
 
 class PdfInput(models.Model):
@@ -12,7 +12,7 @@ class PdfInput(models.Model):
     pdf_file = models.FileField(upload_to='yoga_website/static/yoga_website/')
 
 
-class PdfOutpout(models.Model):
+class PdfOutput(models.Model):
     """SQL table associating the membership form with the user"""
     user = models.OneToOneField(User, on_delete=ChildProcessError)
     pdf_file = models.FileField(upload_to='yoga_website/static/yoga_website/pdf_output/')

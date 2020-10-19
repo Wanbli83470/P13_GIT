@@ -11,7 +11,7 @@ from django.views.generic import (
     CreateView,
     )
 from django.contrib.auth.models import User
-from yoga_website.models import Atelier, Client, Inscribe, PdfOutpout, SecretCode, PdfInput
+from yoga_website.models import Atelier, Client, Inscribe, PdfOutput, SecretCode, PdfInput
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -256,9 +256,9 @@ def my_espace(request):
     if user1 != "admin":
         if user1 == "client_not_active":
             try:
-                pdf_send = PdfOutpout.objects.get(user=user)
+                pdf_send = PdfOutput.objects.get(user=user)
                 pdf_send = True
-            except PdfOutpout.DoesNotExist:
+            except PdfOutput.DoesNotExist:
                 pdf_send = False
             if request.method == "POST":
                 user_modif = UserModif(request.POST)
@@ -314,7 +314,7 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            pdf_save = PdfOutpout()
+            pdf_save = PdfOutput()
             pdf_save.user = user
             pdf_save.pdf_file = request.FILES['pdf_file']
             pdf_save.save()
@@ -555,8 +555,8 @@ def delete_compte(request):
         pass
 
     try:
-        PdfOutpout.objects.get(user=user).delete()
-    except PdfOutpout.DoesNotExist:
+        PdfOutput.objects.get(user=user).delete()
+    except PdfOutput.DoesNotExist:
         pass
 
     """Supprimer les inscriptions aux ateliers"""

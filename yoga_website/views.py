@@ -84,17 +84,6 @@ def ateliers(request):
         return redirect("home")
 
 
-"""HTTP request errors function"""
-
-
-def error_404_view(request, exception):
-    return render(request, 'yoga_website/404.html', status=404)
-
-
-def error_500_view(request, *args):
-    return render(request, 'yoga_website/500.html')
-
-
 """Administrator's function"""
 
 
@@ -104,55 +93,10 @@ def get_id_client(request):
     return client.id
 
 
-def participants(request, id_atelier):
-    user1 = user_actif(request)
-    if user1 != "admin":
-        return redirect('home')
-
-    try:
-        select_atelier = Atelier.objects.get(id=id_atelier)
-    except:
-        error_404 = "Atelier introuvable à cet identifiant"
-        return render(request, 'yoga_website/404.html', {'error_404': error_404})
-
-    select_participants = Inscribe.objects.filter(atelier=select_atelier)
-    nb_participants = len(select_participants)
-    places_restantes = select_atelier.nb_places - nb_participants
-    return render(request, 'yoga_website/participants.html', {'var_color': var_color, 'admin': admin, 'user1': user1,
-                                                              'id_atelier': id_atelier,
-                                                              "select_participants": select_participants,
-                                                              "select_atelier": select_atelier,
-                                                              'places_restantes': places_restantes,
-                                                              'nb_participants': nb_participants})
-
-
 class CreateAteliersView(LoginRequiredMixin, CreateView):
     model = Atelier
     fields = ['type', 'nb_places', 'date', 'lieux', 'places']
     template_name = 'yoga_website/atelier_form.html'
-
-
-def clients(request):
-    user1 = user_actif(request)
-    client = Client.objects.all()
-    if request.method == "POST":
-        form = ClientsForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('clients')
-        else:
-            error = True
-    else:
-        form = ClientsForm(request.POST)
-
-    return render(request, 'yoga_website/clients.html', {"client": client, "form": form, 'var_color': var_color,
-                                                         'admin': admin, 'user1': user1})
-
-
-def delete_atelier(request, id_atelier):
-    user1 = user_actif(request)
-    Atelier(id=id_atelier).delete()
-    return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
 """User function"""

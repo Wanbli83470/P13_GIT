@@ -142,9 +142,9 @@ EMAIL_PORT = 587
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 if os.environ.get('ENV') == 'PRODUCTION':
-    DEBUG = True
+    DEBUG = False
 else:
-    DEBUG = True
+    DEBUG = False
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'yoga_website/static'),

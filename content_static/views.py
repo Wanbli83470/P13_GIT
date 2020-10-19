@@ -33,7 +33,19 @@ def user_actif(request):
         user1 = "new_user"
     return user1
 
-# Create your views here.
+
+"""HTTP request errors function"""
+
+
+def error_404_view(request, exception):
+    return render(request, 'content_static/404.html', status=404)
+
+
+def error_500_view(request, *args):
+    return render(request, 'content_static/500.html')
+
+
+"""Static functions"""
 
 
 def yoga(request):

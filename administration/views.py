@@ -66,6 +66,7 @@ def delete_workshop(request, id_workshop):
 def clients(request):
     user1 = user_actif(request)
     client = Client.objects.all()
+    print(client)
     if request.method == "POST":
         form = ClientsForm(request.POST)
         if form.is_valid():

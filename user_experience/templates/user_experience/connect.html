@@ -14,7 +14,7 @@
         Vous êtes connecté, {{ user.username }} !
         {% else %}
 
-        <form class="w-50 text-center d-block mx-auto" action="{% url 'connexion' %}" method="post">
+        <form class="w-50 text-center d-block mx-auto" action="{% url 'connection' %}" method="post">
             {% csrf_token %}
             {{ form|crispy }}
             <button type="submit" value="Se connecter" class="btn btn-outline-light">Se connecter</button>

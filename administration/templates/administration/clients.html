@@ -25,14 +25,14 @@
     </tr>
   </thead>
   <tbody>
-    {% for c in clients %}
+    {% for c in client %}
       <tr>
         <th scope="row">1</th>
-        <td>mail</td>
+        <td>{{  c.mail_adress }}</td>
         <td>{{  c.user }}</td>
         <td>{{  c.first_name }}</td>
         <td>{{  c.date }}</td>
-        <td>{{  c.tel }}</td>
+        <td>{{  c.Phone }}</td>
       </tr>
     {% endfor %}
 

@@ -52,10 +52,10 @@ class Client(models.Model):
 class Inscribe(models.Model):
     """SQL table managing customer registration for workshops"""
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    atelier = models.ForeignKey(Atelier, on_delete=models.CASCADE)
+    workshop = models.ForeignKey(Atelier, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "id = " + str(self.atelier.id)
+        return "id = " + str(self.workshop.id)
 
 
 class SecretCode(models.Model):

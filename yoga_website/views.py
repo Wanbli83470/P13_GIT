@@ -3,7 +3,7 @@ import random
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, Http404
 from .forms import *
-from .citation import phrase_du_jour
+from .quote import quote_day
 from django.core.mail import EmailMessage
 from django.urls import reverse
 from django.views.generic import (
@@ -57,7 +57,7 @@ def user_actif(request):
 
 def home(request):
     user1 = user_actif(request)
-    return render(request, "yoga_website/bienvenu.html", {'phrase_du_jour': phrase_du_jour,
+    return render(request, "yoga_website/bienvenu.html", {'quote_day': quote_day,
                                                           'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
@@ -280,7 +280,7 @@ def inscribe(request, id_atelier, id_client):
 
     atelier = Atelier.objects.get(id=id_atelier)
     client = Client.objects.get(id=id_client)
-    Inscribe(client=client, atelier=atelier).save()
+    Inscribe(client=client, workshop=atelier).save()
 
     subject = f"{username} Votre inscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
@@ -296,7 +296,7 @@ def unsubscribe(request, id_atelier, id_client):
 
     atelier = Atelier.objects.get(id=id_atelier)
     client = Client.objects.get(id=id_client)
-    Inscribe.objects.get(client=client, atelier=atelier).delete()
+    Inscribe.objects.get(client=client, workshop=atelier).delete()
 
     username = str(request.user)
     email = client.email
@@ -324,7 +324,7 @@ def detail_atelier(request, idatelier, idclient):
         try:
             atelier = Atelier.objects.get(id=id_atelier)
             client = Client.objects.get(id=id_client)
-            nb_participants = Inscribe.objects.filter(atelier=atelier)
+            nb_participants = Inscribe.objects.filter(workshop=atelier)
             nb_participants = len(nb_participants)
             places_restantes = atelier.nb_places - nb_participants
             if places_restantes <= 0:
@@ -333,7 +333,7 @@ def detail_atelier(request, idatelier, idclient):
                 places = True
             go_inscribe = True
             try:
-                go = Inscribe.objects.get(client=client, atelier=atelier)
+                go = Inscribe.objects.get(client=client, workshop=atelier)
                 go_inscribe = False
             except Inscribe.DoesNotExist:
                 go = None

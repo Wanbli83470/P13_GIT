@@ -6,12 +6,9 @@ test = datetime(2019, 3, 21, 0, 0)
 
 week = today.isocalendar()
 
-#print(week)
-
 week = week[1]
-#print("On veut récupérer le numéro de semaine : {}".format(week))
 
-phrase = ["Celui qui est le maître de lui-même est plus grand que celui qui est le maître du monde.",
+line = ["Celui qui est le maître de lui-même est plus grand que celui qui est le maître du monde.",
           "Doutez de tout et surtout de ce que je vais vous dire.",
           "Il n’existe rien de constant si ce n’est le changement",
           "Le monde est aveugle. Rares sont ceux qui voient correctement.",
@@ -65,5 +62,4 @@ phrase = ["Celui qui est le maître de lui-même est plus grand que celui qui es
           "Quelles qu’aient été les difficultés du passé, tu peux toujours recommencer à zéro aujourd’hui.",
           ]
 
-phrase_du_jour = (phrase[week])
-#print(phrase[week])
+quote_day = (line[week])

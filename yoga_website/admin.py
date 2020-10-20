@@ -21,7 +21,7 @@ class ClientAdmin(admin.ModelAdmin):
     search_fields = ('email', 'prenom', 'nom')
 
 class InscribeAdmin(admin.ModelAdmin):
-    list_display = ('client', 'atelier')
+    list_display = ('client', 'workshop')
     list_filter = ('client',)
     ordering = ('client',)
 

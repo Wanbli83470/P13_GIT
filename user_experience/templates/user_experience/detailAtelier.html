@@ -4,11 +4,11 @@
 {% block content %}
 <div class="p-3 bg-white shadow-lg text-center">
 
-    <h2>Places : <strong class="text-vert">{{ id_workshop.nb_places }}</strong></h2><br>
+    <h2>Places : <strong class="text-vert">{{ workshop.nb_places }}</strong></h2><br>
     <h2>Places Restantes : <strong class="text-danger">{{ remaining_places }}</strong></h2><br>
-    <h2>Lieux : <strong class="text-vert">{{ id_workshop.lieux }}</strong></h2><br>
-    <h2>Type de séance : <strong class="text-vert">{{ id_workshop.type }}</strong></h2><br>
-    <h2>Date : <strong class="text-vert">{{ id_workshop.date }}</strong></h2><br>
+    <h2>Lieux : <strong class="text-vert">{{ workshop.location }}</strong></h2><br>
+    <h2>Type de séance : <strong class="text-vert">{{ workshop.type }}</strong></h2><br>
+    <h2>Date : <strong class="text-vert">{{ workshop.date }}</strong></h2><br>
 {% if places %}
 
     {% if go_inscribe %}

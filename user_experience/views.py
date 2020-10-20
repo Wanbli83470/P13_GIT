@@ -115,7 +115,7 @@ def register(request):
             messages.success(request, f'Votre compte {username} est crée')
             generate_pdf(email=email, username=username)
             user_save = User.objects.get(username=username)
-            PdfInput(user=user_save, pdf_file=f"user_experience/static/yoga_website/formulaire_adhésion_{username}.pdf").save()
+            PdfInput(user=user_save, pdf_file=f"user_experience/static/user_experience/formulaire_adhésion_{username}.pdf").save()
             SecretCode(user=user_save).save()
             return redirect("registrationValid", username=username, email=email)
         else:
@@ -139,7 +139,7 @@ def registration_valid(request, username, email):
            f"en vous souhaitant une bonne journée"
     email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.content_subtype = "html"
-    email_confirm.attach_file(f"user_experience/static/yoga_website/formulaire_adhésion_{username}.pdf")
+    email_confirm.attach_file(f"user_experience/static/user_experience/formulaire_adhésion_{username}.pdf")
     email_confirm.send()
     username = str(username)
     return render(request, 'user_experience/registration_valid.html', {'username': username, 'email': email,
@@ -308,7 +308,7 @@ def unsubscribe_workshop(request, id_workshop, id_client):
     email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.send()
 
-    return render(request, 'user_experience/unsubscribe.html', {'var_color': var_color,
+    return render(request, 'user_experience/unsubscribe_workshop.html', {'var_color': var_color,
                                                              'admin': admin, 'user1': user1})
 
     return redirect('home')
@@ -345,7 +345,7 @@ def detail_workshop(request, id_workshop, id_client):
 
         except:
             error_404 = "L'assocation ne trouve pas l'atelier que vous cherchez"
-            return render(request, 'yoga_website/404.html', {'error_404': error_404})
+            return render(request, 'user_experience/404.html', {'error_404': error_404})
 
     else:
         return redirect('home')

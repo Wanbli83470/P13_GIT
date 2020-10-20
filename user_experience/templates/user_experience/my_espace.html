@@ -29,7 +29,7 @@ Mon espace
         <ul>
             {% for l in workshop %}
                 {% if l.id in id_registered %}
-                    <a href="{% url 'detailAteliers'  l.id client.id %}">
+                    <a href="{% url 'detailWorkshop'  l.id client.id %}">
                         <li>{{ l.type }} {{ l.date }} - {{ l.location }}</li>
                     </a>
                 {% else %}
@@ -59,7 +59,7 @@ Mon espace
         <h4>Veuillez remplir et nous transmettre votre forumalaire :</h4>
 
         <ul>
-            <li><h4><a href="{% static 'yoga_website/'%}{{ path_pdf }} "> Télécharger mon formulaire </a></h4></li>
+            <li><h4><a href="{% static 'user_experience/'%}{{ path_pdf }} "> Télécharger mon formulaire </a></h4></li>
             <li><h4><a href="{% url 'upload_pdf' %}">Envoyer mon formulaire d'adhésion</a></h4></li>
         </ul>
 

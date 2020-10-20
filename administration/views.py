@@ -25,7 +25,7 @@ def user_actif(request):
         var_color = "vert"
         user1 = "client"
         admin = False
-    elif mon_user not in list_client and mon_user is not "AnonymousUser" :
+    elif mon_user not in list_client and mon_user is not "AnonymousUser":
         user1 = "client_not_active"
         var_color = "vert"
     elif mon_user == "AnonymousUser":
@@ -44,7 +44,7 @@ def participants(request, id_atelier):
         select_atelier = Workshop.objects.get(id=id_atelier)
     except:
         error_404 = "Atelier introuvable à cet identifiant"
-        return render(request, 'yoga_website/404.html', {'error_404': error_404})
+        return render(request, 'user_experience/404.html', {'error_404': error_404})
 
     select_participants = Inscribe.objects.filter(workshop=select_atelier)
     nb_participants = len(select_participants)
@@ -60,7 +60,7 @@ def participants(request, id_atelier):
 def delete_workshop(request, id_workshop):
     user1 = user_actif(request)
     Workshop(id=id_workshop).delete()
-    return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
+    return render(request, 'user_experience/workshop.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
 def clients(request):

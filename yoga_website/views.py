@@ -36,20 +36,20 @@ def user_actif(request):
 
     global var_color
     global admin
-    mon_user = str(request.user)
+    my_user = str(request.user)
     user = str
-    if mon_user == "thomas":
+    if my_user == "thomas":
         var_color = "violet"
         admin = True
         user1 = "admin"
-    elif mon_user in list_client:
+    elif my_user in list_client:
         var_color = "vert"
         user1 = "client"
         admin = False
-    elif mon_user not in list_client and mon_user is not "AnonymousUser" :
+    elif my_user not in list_client and my_user is not "AnonymousUser" :
         user1 = "client_not_active"
         var_color = "vert"
-    elif mon_user == "AnonymousUser":
+    elif my_user == "AnonymousUser":
         var_color = "vert"
         user1 = "new_user"
     return user1
@@ -72,12 +72,12 @@ def ateliers(request):
             participants = str(Inscribe.objects.filter(client=client))
             participants = [int(l) for l in participants if l.isdecimal()]
 
-        ateliers = Workshop.objects.order_by('date')
+        workshops = Workshop.objects.order_by('date')
         if user1 != "admin":
             id_client = get_id_client(request)
         else:
             id_client = 0
-        return render(request, 'yoga_website/ateliers.html', {'ateliers': ateliers, 'var_color': var_color, 'admin': admin,
+        return render(request, 'yoga_website/ateliers.html', {'workshops': workshops, 'var_color': var_color, 'admin': admin,
                                                               'user1': user1, 'id_client': id_client,
                                                               'participants': participants})
     else:
@@ -147,7 +147,7 @@ def registration_valid(request, username, email):
                                                                     'admin': admin, 'user1': user1})
 
 
-def connexion(request):
+def connection(request):
     user1 = user_actif(request)
     error = False
 
@@ -157,10 +157,10 @@ def connexion(request):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             user = authenticate(username=username, password=password)  # Nous vérifions si les données sont correctes
-            if user:  # Si l'objet renvoyé n'est pas None
-                login(request, user)  # nous connectons l'utilisateur
+            if user:  # if object is not None
+                login(request, user)  # Connect the user
                 return redirect('/')
-            else:  # sinon une erreur sera affichée
+            else:  # A screen error
                 error = True
     else:
         form = ConnexionForm()
@@ -174,7 +174,7 @@ def my_espace(request):
     """Update the data user"""
     user_modif = UserModif()
     user = request.user
-    chemin_pdf, registered, client, nb_registered, id_registered, ateliers = None, None, None, None, None, None
+    path_pdf, registered, client, nb_registered, id_registered, workshop = None, None, None, None, None, None
     pdf_input = PdfInput(user=user)
     pdf_input = pdf_input.pdf_file
     pdf_send = False
@@ -215,22 +215,22 @@ def my_espace(request):
 
 
         """Display of workshops"""
-        chemin_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
+        path_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
         name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
         pdf_bdd = PdfInput.objects.get(user=user)
         pdf_bdd.save()
         registered = Inscribe.objects.filter(client=client)
         nb_registered = len(registered)
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
-        ateliers = Workshop.objects.order_by('date')
-        id_ateliers = [i.id for i in ateliers]
+        workshop = Workshop.objects.order_by('date')
+        id_ateliers = [i.id for i in workshop]
     else:
         pass
-    return render(request, "yoga_website/espace.html", {'var_color': var_color, 'admin': admin,
-                                                        'user1': user1, 'name_pdf': name_pdf, 'chemin_pdf': chemin_pdf,
+    return render(request, "yoga_website/my_espace.html", {'var_color': var_color, 'admin': admin,
+                                                        'user1': user1, 'name_pdf': name_pdf, 'path_pdf': path_pdf,
                                                         'registered': registered, 'client': client,
                                                         'nb_registered': nb_registered, 'id_registered': id_registered,
-                                                        'ateliers': ateliers, 'user_modif': user_modif,
+                                                        'workshop': workshop, 'user_modif': user_modif,
                                                         'pdf_send': pdf_send, 'pdf_input': pdf_input})
 
 
@@ -248,7 +248,7 @@ def upload_file(request):
             pass
     else:
         form = UploadFileForm()
-    return render(request, 'yoga_website/upload.html', {'form': form})
+    return render(request, 'yoga_website/upload_pdf.html', {'form': form})
 
 
 def contact_email(request):
@@ -260,7 +260,7 @@ def contact_email(request):
 
         if mail_form.is_valid():
             subject = mail_form.cleaned_data["subject"]
-            adresse_mail = mail_form.cleaned_data["adresse_mail"]
+            adresse_mail = mail_form.cleaned_data["mail_adress"]
             body = mail_form.cleaned_data["body"] + " " + adresse_mail
             email = EmailMessage("Melodyoga : " + subject, body, mail_soph, [mail_soph])
 
@@ -271,39 +271,39 @@ def contact_email(request):
                                                          'admin': admin, 'user1': user1})
 
 
-def inscribe(request, id_atelier, id_client):
+def inscribe_workshop(request, id_workshop, id_client):
     user1 = user_actif(request)
 
     username = str(request.user)
     email = Client.objects.get(id=id_client)
-    email = email.email
+    email = email.mail_adress
 
-    atelier = Workshop.objects.get(id=id_atelier)
+    workshop = Workshop.objects.get(id=id_workshop)
     client = Client.objects.get(id=id_client)
-    Inscribe(client=client, workshop=atelier).save()
+    Inscribe(client=client, workshop=workshop).save()
 
     subject = f"{username} Votre inscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
-    body = f"Bonjour {username} Nous vous confirmons votre inscription pour l'atelier en date du {atelier.date}, en vous souhaitant une bonne journée."
+    body = f"Bonjour {username} Nous vous confirmons votre inscription pour l'atelier en date du {workshop.date}, en vous souhaitant une bonne journée."
     email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.send()
 
-    return render(request, 'yoga_website/inscribe.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
+    return render(request, 'yoga_website/inscribe_workshop.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
-def unsubscribe(request, id_atelier, id_client):
+def unsubscribe_workshop(request, id_workshop, id_client):
     user1 = user_actif(request)
 
-    atelier = Workshop.objects.get(id=id_atelier)
+    workshop = Workshop.objects.get(id=id_workshop)
     client = Client.objects.get(id=id_client)
-    Inscribe.objects.get(client=client, workshop=atelier).delete()
+    Inscribe.objects.get(client=client, workshop=workshop).delete()
 
     username = str(request.user)
-    email = client.email
+    email = client.mail_adress
 
     subject = "Votre déinscription : Atelier chez Melodyoga"
     adresse_mail = mail_soph
-    body = f"Bonjour {username} Nous avons bien noté votre annulation pour l'atelier en date du {atelier.date} " \
+    body = f"Bonjour {username} Nous avons bien noté votre annulation pour l'atelier en date du {workshop.date} " \
            f"et espérons vous revoir prochainement."
     email_confirm = EmailMessage(subject, body, adresse_mail, [email, adresse_mail])
     email_confirm.send()
@@ -314,34 +314,34 @@ def unsubscribe(request, id_atelier, id_client):
     return redirect('home')
 
 
-def detail_atelier(request, idatelier, idclient):
+def detail_workshop(request, id_workshop, id_client):
     """Show workshop details and manage registration"""
     if user_actif(request) == "client":
         user1 = user_actif(request)
-        id_atelier = idatelier
-        id_client = idclient
+        id_workshop = id_workshop
+        id_client = id_client
 
         try:
-            atelier = Workshop.objects.get(id=id_atelier)
+            workshop = Workshop.objects.get(id=id_workshop)
             client = Client.objects.get(id=id_client)
-            nb_participants = Inscribe.objects.filter(workshop=atelier)
+            nb_participants = Inscribe.objects.filter(workshop=workshop)
             nb_participants = len(nb_participants)
-            places_restantes = atelier.nb_places - nb_participants
-            if places_restantes <= 0:
+            remaining_places = workshop.nb_places - nb_participants
+            if remaining_places <= 0:
                 places = False
             else:
                 places = True
             go_inscribe = True
             try:
-                go = Inscribe.objects.get(client=client, workshop=atelier)
+                go = Inscribe.objects.get(client=client, workshop=workshop)
                 go_inscribe = False
             except Inscribe.DoesNotExist:
                 go = None
                 go_inscribe = True
             return render(request, 'yoga_website/detailAtelier.html',
                           {'var_color': var_color, 'admin': admin, 'user1': user1,
-                           'go_inscribe': go_inscribe, 'atelier': atelier, 'id_atelier': id_atelier, 'id_client': id_client,
-                           'nb_participants': nb_participants, 'places_restantes': places_restantes, 'places': places})
+                           'go_inscribe': go_inscribe, 'workshop': workshop, 'id_workshop': id_workshop, 'id_client': id_client,
+                           'nb_participants': nb_participants, 'remaining_places': remaining_places, 'places': places})
 
         except:
             error_404 = "L'assocation ne trouve pas l'atelier que vous cherchez"
@@ -357,7 +357,7 @@ class AtelierListView(ListView):
     context_object_name = "ateliers"
 
 
-def deconnexion(request):
+def disconnection(request):
     user1 = user_actif(request)
     global var_color
     global admin

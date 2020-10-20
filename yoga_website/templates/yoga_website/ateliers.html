@@ -15,7 +15,7 @@
 
 <hr class="border border-white">
 
-    {% for l in ateliers %}
+    {% for l in workshops %}
 
     {% if l.places == True %}
         <div id="atelier{{l.id}}" class="container bg-light mt-5 p-4 rounded shadow-lg ateliers border border-primary">
@@ -23,18 +23,18 @@
                 <h2> {{  l.type }} -- {{ l.date }} </h2>
                 <h3> Lieux : {{ l.lieux }}</h3>
                  {% if l.id not in participants %}
-                    <a href="{% url 'detailAteliers'  l.id id_client %}">
+                    <a href="{% url 'detailWorkshop'  l.id id_client %}">
                         <button type="button" class="btn btn-lg btn-outline-primary text-center mt-2"> <strong>  >>> Details et inscription </strong> </button>
                     </a>
                  {% else %}
-                    <a href="{% url 'detailAteliers'  l.id id_client %}">
+                    <a href="{% url 'detailWorkshop'  l.id id_client %}">
                         <button type="button" class="btn btn-lg btn-outline-secondary text-center mt-2"> <strong>  >>> Me désinscrire </strong> </button>
                     </a>
                  {% endif %}
 
 
             {% else %}
-                <form class="DeleteAjax" method="POST" action="{% url 'deleteAtelier' l.id %}" > {% csrf_token %}
+                <form class="DeleteAjax" method="POST" action="{% url 'deleteWorkshop' l.id %}" > {% csrf_token %}
                     <button class="btn btn-lg rounded bg-primary d-inline float-right border border-dark"><i class="fas fa-trash-alt text-white"></i></button>
                 </form>
                 <h2> {{  l.type }} -- {{ l.date }} </h2>

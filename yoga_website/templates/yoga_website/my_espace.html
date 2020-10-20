@@ -27,10 +27,10 @@ Mon espace
         <h1>Mes prochaines séances :</h1>
         <h3 >Vous êtes inscrit à <strong class="text-vert">{{ nb_registered }} séance{{ nb_registered|pluralize }} </strong></h3>
         <ul>
-            {% for l in ateliers %}
+            {% for l in workshop %}
                 {% if l.id in id_registered %}
                     <a href="{% url 'detailAteliers'  l.id client.id %}">
-                        <li>{{ l.type }} {{ l.date }} - {{ l.lieux }}</li>
+                        <li>{{ l.type }} {{ l.date }} - {{ l.location }}</li>
                     </a>
                 {% else %}
                 {% endif %}
@@ -59,7 +59,7 @@ Mon espace
         <h4>Veuillez remplir et nous transmettre votre forumalaire :</h4>
 
         <ul>
-            <li><h4><a href="{% static 'yoga_website/'%}{{ chemin_pdf }} "> Télécharger mon formulaire </a></h4></li>
+            <li><h4><a href="{% static 'yoga_website/'%}{{ path_pdf }} "> Télécharger mon formulaire </a></h4></li>
             <li><h4><a href="{% url 'upload' %}">Envoyer mon formulaire d'adhésion</a></h4></li>
         </ul>
 

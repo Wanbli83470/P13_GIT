@@ -51,7 +51,7 @@
                   <div class="modal-dialog p-5">
                     <div class="modal-content p-5 center-block text-center">
                       <h3>Voulez vous vraiment vous déconnecter ? </h3>
-                        <a href="{% url 'deconnexion'%}">
+                        <a href="{% url 'disconnection'%}">
                             <button type="button" class="btn btn-outline-{{ var_color }} center-block">Me déconnecter</button>
                         </a>
 
@@ -71,7 +71,7 @@
           <div class="modal-dialog p-5">
             <div class="modal-content p-5 center-block text-center">
               <h3>Voulez vous vraiment vous déconnecter ? </h3>
-                <a href="{% url 'deconnexion'%}">
+                <a href="{% url 'disconnection'%}">
                     <button type="button" class="btn btn-outline-{{ var_color }} center-block">Me déconnecter</button>
                 </a>
 
@@ -89,7 +89,7 @@
           <div class="modal-dialog p-5">
             <div class="modal-content p-5 center-block text-center">
               <h3>Voulez vous vraiment vous déconnecter ? </h3>
-                <a href="{% url 'deconnexion'%}">
+                <a href="{% url 'disconnection'%}">
                     <button type="button" class="btn btn-outline-{{ var_color }} center-block">Me déconnecter</button>
                 </a>
 
@@ -100,7 +100,7 @@
         {% endif %}
         <!--Nouvel utilisateur-->
         {% if user1 == "new_user" %}
-      <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'connexion'%}"><h3>Connexion</h3></a>
+      <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'connection'%}"><h3>Connexion</h3></a>
       <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'inscription' %}"><h3>Inscription</h3></a>
         {% else %}
         {% endif %}

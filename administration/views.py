@@ -57,9 +57,9 @@ def participants(request, id_atelier):
                                                               'nb_participants': nb_participants})
 
 
-def delete_atelier(request, id_atelier):
+def delete_workshop(request, id_workshop):
     user1 = user_actif(request)
-    Workshop(id=id_atelier).delete()
+    Workshop(id=id_workshop).delete()
     return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 

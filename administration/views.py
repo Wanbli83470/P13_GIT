@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from yoga_website.models import *
-from yoga_website.forms import *
+from user_experience.models import *
+from user_experience.forms import *
 var_color = "vert"
 admin = False
 

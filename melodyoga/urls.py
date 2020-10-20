@@ -20,7 +20,7 @@ handler404 = 'content_static.views.error_404_view'
 handler500 = 'content_static.views.error_500_view'
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('yoga_website.urls')),
+    path('', include('user_experience.urls')),
     path('', include('content_static.urls')),
     path('', include('administration.urls')),
     path('', include('user_experience.urls')),

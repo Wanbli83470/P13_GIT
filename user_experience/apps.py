@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class UserExperienceConfig(AppConfig):
+class YogaWebsiteConfig(AppConfig):
     name = 'user_experience'

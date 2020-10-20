@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from yoga_website.models import *
+from user_experience.models import *
 
 var_color = "vert"
 admin = False

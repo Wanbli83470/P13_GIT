@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY_P13")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['melodyoga.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -37,11 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'yoga_website.apps.YogaWebsiteConfig',
     'crispy_forms',
     'content_static',
     'administration',
-    'user_experience'
+    'user_experience',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'yoga_website.context_processors.get_infos',
+                'user_experience.context_processors.get_infos',
             ],
         },
     },
@@ -147,5 +146,5 @@ else:
     DEBUG = True
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'yoga_website/static'),
+    os.path.join(BASE_DIR, 'user_experience/static'),
 )

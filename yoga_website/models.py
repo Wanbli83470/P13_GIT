@@ -18,7 +18,7 @@ class PdfOutput(models.Model):
     pdf_file = models.FileField(upload_to='yoga_website/static/yoga_website/pdf_output/')
 
 
-class Atelier(models.Model):
+class Workshop(models.Model):
     """SQL table containing information for each workshop"""
     type = models.CharField(max_length=30)
     nb_places = models.IntegerField()
@@ -52,7 +52,7 @@ class Client(models.Model):
 class Inscribe(models.Model):
     """SQL table managing customer registration for workshops"""
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    workshop = models.ForeignKey(Atelier, on_delete=models.CASCADE)
+    workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)
 
     def __str__(self):
         return "id = " + str(self.workshop.id)

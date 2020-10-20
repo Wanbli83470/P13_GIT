@@ -30,7 +30,7 @@ class InscribeAdmin(admin.ModelAdmin):
     ordering = ('client',)
 
 
-class AtelierAdmin(admin.ModelAdmin):
+class WorkshopAdmin(admin.ModelAdmin):
     list_display = ('type', 'nb_places', 'date', 'location', 'places')
     list_filter = ('type',)
     date_hierarchy = 'date'
@@ -38,7 +38,7 @@ class AtelierAdmin(admin.ModelAdmin):
     search_fields = ('type', 'location')
 
 
-admin.site.register(Atelier, AtelierAdmin)
+admin.site.register(Workshop, WorkshopAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Inscribe, InscribeAdmin)
 admin.site.register(PdfInput, PdfAdmin)

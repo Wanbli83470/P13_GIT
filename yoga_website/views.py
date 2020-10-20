@@ -11,7 +11,7 @@ from django.views.generic import (
     CreateView,
     )
 from django.contrib.auth.models import User
-from yoga_website.models import Atelier, Client, Inscribe, PdfOutput, SecretCode, PdfInput
+from yoga_website.models import Workshop, Client, Inscribe, PdfOutput, SecretCode, PdfInput
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -72,7 +72,7 @@ def ateliers(request):
             participants = str(Inscribe.objects.filter(client=client))
             participants = [int(l) for l in participants if l.isdecimal()]
 
-        ateliers = Atelier.objects.order_by('date')
+        ateliers = Workshop.objects.order_by('date')
         if user1 != "admin":
             id_client = get_id_client(request)
         else:
@@ -94,7 +94,7 @@ def get_id_client(request):
 
 
 class CreateAteliersView(LoginRequiredMixin, CreateView):
-    model = Atelier
+    model = Workshop
     fields = ['type', 'nb_places', 'date', 'location', 'places']
     template_name = 'yoga_website/atelier_form.html'
 
@@ -222,7 +222,7 @@ def my_espace(request):
         registered = Inscribe.objects.filter(client=client)
         nb_registered = len(registered)
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
-        ateliers = Atelier.objects.order_by('date')
+        ateliers = Workshop.objects.order_by('date')
         id_ateliers = [i.id for i in ateliers]
     else:
         pass
@@ -278,7 +278,7 @@ def inscribe(request, id_atelier, id_client):
     email = Client.objects.get(id=id_client)
     email = email.email
 
-    atelier = Atelier.objects.get(id=id_atelier)
+    atelier = Workshop.objects.get(id=id_atelier)
     client = Client.objects.get(id=id_client)
     Inscribe(client=client, workshop=atelier).save()
 
@@ -294,7 +294,7 @@ def inscribe(request, id_atelier, id_client):
 def unsubscribe(request, id_atelier, id_client):
     user1 = user_actif(request)
 
-    atelier = Atelier.objects.get(id=id_atelier)
+    atelier = Workshop.objects.get(id=id_atelier)
     client = Client.objects.get(id=id_client)
     Inscribe.objects.get(client=client, workshop=atelier).delete()
 
@@ -322,7 +322,7 @@ def detail_atelier(request, idatelier, idclient):
         id_client = idclient
 
         try:
-            atelier = Atelier.objects.get(id=id_atelier)
+            atelier = Workshop.objects.get(id=id_atelier)
             client = Client.objects.get(id=id_client)
             nb_participants = Inscribe.objects.filter(workshop=atelier)
             nb_participants = len(nb_participants)
@@ -352,7 +352,7 @@ def detail_atelier(request, idatelier, idclient):
 
 
 class AtelierListView(ListView):
-    model = Atelier
+    model = Workshop
     template_name = 'yoga_website/ateliers.html'
     context_object_name = "ateliers"
 

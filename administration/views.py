@@ -41,7 +41,7 @@ def participants(request, id_atelier):
         return redirect('home')
 
     try:
-        select_atelier = Atelier.objects.get(id=id_atelier)
+        select_atelier = Workshop.objects.get(id=id_atelier)
     except:
         error_404 = "Atelier introuvable à cet identifiant"
         return render(request, 'yoga_website/404.html', {'error_404': error_404})
@@ -59,7 +59,7 @@ def participants(request, id_atelier):
 
 def delete_atelier(request, id_atelier):
     user1 = user_actif(request)
-    Atelier(id=id_atelier).delete()
+    Workshop(id=id_atelier).delete()
     return render(request, 'yoga_website/ateliers.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
 

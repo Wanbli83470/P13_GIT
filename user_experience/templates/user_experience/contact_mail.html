@@ -13,7 +13,7 @@
         {% endif %}
 
 
-        <form class="w-50 text-center d-block mx-auto" role="form" action="{% url 'contact' %}" method="post">
+        <form class="w-50 text-center d-block mx-auto" role="form" action="{% url 'mail_contact' %}" method="post">
             {% csrf_token %}
             {{ mail_form|crispy}}
             <button type="submit" class="btn btn-outline-light">Envoyer mail</button>

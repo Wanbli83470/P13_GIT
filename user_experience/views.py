@@ -259,13 +259,13 @@ def contact_email(request):
     if request.method == "POST":
 
         if mail_form.is_valid():
-            subject = mail_form.cleaned_data["subject"]
+            subject = mail_form.cleaned_data["Subject"]
             adresse_mail = mail_form.cleaned_data["mail_adress"]
-            body = mail_form.cleaned_data["body"] + " " + adresse_mail
+            body = mail_form.cleaned_data["Body"] + " " + adresse_mail
             email = EmailMessage("Melodyoga : " + subject, body, mail_soph, [mail_soph])
 
             email.send()
-            return redirect('/home')
+            return redirect('home')
 
     return render(request, 'user_experience/contact_mail.html', {'mail_form': mail_form, 'var_color': var_color,
                                                          'admin': admin, 'user1': user1})

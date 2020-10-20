@@ -25,7 +25,11 @@ Mon espace
 
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Mes prochaines séances :</h1>
-        <h3 >Vous êtes inscrit à <strong class="text-vert">{{ nb_registered }} séance{{ nb_registered|pluralize }} </strong></h3>
+        {% if nb_registered == 0 %}
+            <h3 >Vous n'êtes inscrit à aucune séance !</h3>
+        {% else %}
+            <h3 >Vous êtes inscrit à <strong class="text-vert">{{ nb_registered }} séance{{ nb_registered|pluralize }} </strong></h3>
+        {% endif %}
         <ul>
             {% for l in workshop %}
                 {% if l.id in id_registered %}

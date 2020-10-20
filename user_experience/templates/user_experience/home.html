@@ -14,8 +14,8 @@
     <script src="https://code.jquery.com/jquery-3.4.0.js" integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
 
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'yoga_website/style.css' %}">
-    <script type="text/javascript" src="{% static 'yoga_website/script.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'user_experience/style.css' %}">
+    <script type="text/javascript" src="{% static 'user_experience/script.js' %}"></script>
     <title>{% block title %} Accueil {% endblock title %} </title>
     <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
 
@@ -115,8 +115,8 @@
 {% block content %}
 <br>
     <h3 class="text-center text-{{ var_color }}">Pensée de la semaine : <br> <em> <hr> <strong> {{ quote_day }} </strong> </em> </h3>
-    <a target="_blank" class="text-center mx-auto d-block" href="{% static 'yoga_website/ASSOCIATION_MELODYOGA.pdf' %}"> <h4> <i class="fas fa-book-reader"></i> Statuts de l'association</h4> </a>
-    <img src="{% static 'yoga_website/background.jpg' %}" class="img-fluid mx-auto d-block rounded" alt="Responsive image">
+    <a target="_blank" class="text-center mx-auto d-block" href="{% static 'user_experience/ASSOCIATION_MELODYOGA.pdf' %}"> <h4> <i class="fas fa-book-reader"></i> Statuts de l'association</h4> </a>
+    <img src="{% static 'user_experience/background.jpg' %}" class="img-fluid mx-auto d-block rounded" alt="Responsive image">
 {% endblock content %}
 
     <footer class="p-5">

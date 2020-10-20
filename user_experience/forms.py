@@ -17,7 +17,7 @@ class RegistrationForm(UserCreationForm):
         )
 
 
-class ConnexionForm(forms.Form):
+class ConnectionForm(forms.Form):
     """Login form"""
     username = forms.CharField(label="Nom d'utilisateur", max_length=20)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)

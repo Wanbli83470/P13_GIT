@@ -46,7 +46,7 @@ def participants(request, id_atelier):
         error_404 = "Atelier introuvable à cet identifiant"
         return render(request, 'yoga_website/404.html', {'error_404': error_404})
 
-    select_participants = Inscribe.objects.filter(atelier=select_atelier)
+    select_participants = Inscribe.objects.filter(workshop=select_atelier)
     nb_participants = len(select_participants)
     places_restantes = select_atelier.nb_places - nb_participants
     return render(request, 'administration/participants.html', {'var_color': var_color, 'admin': admin, 'user1': user1,

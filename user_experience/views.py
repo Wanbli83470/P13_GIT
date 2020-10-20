@@ -150,11 +150,21 @@ def registration_valid(request, username, email):
 def connection(request):
     user1 = user_actif(request)
     error = False
+    email_user = User.objects.all()
+    email_user1 = []
+    for i in email_user:
+        print(i.email)
+        email_user1.append(i.email)
 
     if request.method == "POST":
         form = ConnectionForm(request.POST or None)
         if form.is_valid():
             username = form.cleaned_data["username"]
+            print(User.objects.all)
+            if username in email_user1:
+                print("Détection de mail")
+                username = User.objects.get(email=username).username
+                print(username)
             password = form.cleaned_data["password"]
             user = authenticate(username=username, password=password)  # Nous vérifions si les données sont correctes
             if user:  # if object is not None

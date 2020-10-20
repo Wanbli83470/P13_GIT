@@ -24,7 +24,7 @@ class Atelier(models.Model):
     nb_places = models.IntegerField()
     places = models.BooleanField(default=True)
     date = models.DateTimeField()
-    lieux = models.CharField(max_length=50)
+    location = models.CharField(max_length=50)
 
     def __str__(self):
         """Customizing the print python method"""
@@ -38,15 +38,15 @@ class Atelier(models.Model):
 class Client(models.Model):
     """SQL table containing the information of each client of the association"""
     user = models.OneToOneField(User, on_delete=ChildProcessError)
-    prenom = models.CharField(max_length=254, default="test")
-    nom = models.CharField(max_length=255)
-    tel = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=254, default="test")
+    last_name = models.CharField(max_length=255)
+    Phone = models.CharField(max_length=255)
     date = models.DateTimeField(default=timezone.now)
-    email = models.EmailField(max_length=254)
+    mail_adress = models.EmailField(max_length=254)
 
     def __str__(self):
         return "CLIENT : {} NOM : {} ID : {}\n Tél : {} Email : {}"\
-            .format(self.prenom, self.nom, self.id, self.tel, self.email)
+            .format(self.first_name, self.last_name, self.id, self.Phone, self.mail_adress)
 
 
 class Inscribe(models.Model):

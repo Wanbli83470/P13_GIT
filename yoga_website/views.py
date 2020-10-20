@@ -95,7 +95,7 @@ def get_id_client(request):
 
 class CreateAteliersView(LoginRequiredMixin, CreateView):
     model = Atelier
-    fields = ['type', 'nb_places', 'date', 'lieux', 'places']
+    fields = ['type', 'nb_places', 'date', 'location', 'places']
     template_name = 'yoga_website/atelier_form.html'
 
 
@@ -200,10 +200,10 @@ def my_espace(request):
                 username = user_modif.cleaned_data["username"]
                 adresse_mail = user_modif.cleaned_data["adresse_mail"]
                 password = user_modif.cleaned_data["password"]
-                tel = user_modif.cleaned_data["tel"]
+                phone = user_modif.cleaned_data["phone"]
                 """Modif"""
-                client.tel = tel
-                client.email = adresse_mail
+                client.phone = phone
+                client.mail_adress = adresse_mail
                 user.set_password(password)
                 user.username = username
                 user.email = adresse_mail

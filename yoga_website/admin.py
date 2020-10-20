@@ -2,10 +2,12 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
+
 class PdfAdmin(admin.ModelAdmin):
     list_display = ('user', 'pdf_file')
     list_filter = ('user',)
     ordering = ('user',)
+
 
 class SecretAdmin(admin.ModelAdmin):
     list_display = ('user', 'code')
@@ -13,24 +15,27 @@ class SecretAdmin(admin.ModelAdmin):
     ordering = ('user',)
     search_fields = ('user', 'code')
 
+
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('prenom', 'tel', 'email')
-    list_filter = ('prenom',)
+    list_display = ('first_name', 'Phone', 'mail_adress')
+    list_filter = ('first_name',)
     date_hierarchy = 'date'
-    ordering = ('prenom',)
-    search_fields = ('email', 'prenom', 'nom')
+    ordering = ('first_name',)
+    search_fields = ('mail_adress', 'first_name', 'last_name')
+
 
 class InscribeAdmin(admin.ModelAdmin):
     list_display = ('client', 'workshop')
     list_filter = ('client',)
     ordering = ('client',)
 
+
 class AtelierAdmin(admin.ModelAdmin):
-    list_display = ('type', 'nb_places', 'date', 'lieux', 'places')
+    list_display = ('type', 'nb_places', 'date', 'location', 'places')
     list_filter = ('type',)
     date_hierarchy = 'date'
     ordering = ('nb_places',)
-    search_fields = ('type', 'lieux')
+    search_fields = ('type', 'location')
 
 
 admin.site.register(Atelier, AtelierAdmin)

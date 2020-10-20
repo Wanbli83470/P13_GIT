@@ -54,7 +54,7 @@ class UserModif(forms.Form):
     username = forms.CharField(label="username", max_length=20)
     password = forms.CharField(max_length=32, widget=forms.PasswordInput)
     mail_adress = forms.EmailField(label="Email")
-    tel = forms.CharField(label="N°Tél", max_length=10)
+    phone = forms.CharField(label="N°Tél", max_length=10)
 
 
 class UploadFileForm(forms.Form):

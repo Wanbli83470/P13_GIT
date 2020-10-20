@@ -57,11 +57,11 @@ def user_actif(request):
 
 def home(request):
     user1 = user_actif(request)
-    return render(request, "yoga_website/bienvenu.html", {'quote_day': quote_day,
+    return render(request, "yoga_website/home.html", {'quote_day': quote_day,
                                                           'var_color': var_color, 'admin': admin, 'user1': user1})
 
 
-def ateliers(request):
+def workshop(request):
     """View all workshops : administrator view and user view"""
     if user_actif(request) != "client_not_active":
         user1 = user_actif(request)
@@ -77,7 +77,7 @@ def ateliers(request):
             id_client = get_id_client(request)
         else:
             id_client = 0
-        return render(request, 'yoga_website/ateliers.html', {'workshops': workshops, 'var_color': var_color, 'admin': admin,
+        return render(request, 'yoga_website/workshop.html', {'workshops': workshops, 'var_color': var_color, 'admin': admin,
                                                               'user1': user1, 'id_client': id_client,
                                                               'participants': participants})
     else:
@@ -267,7 +267,7 @@ def contact_email(request):
             email.send()
             return redirect('/home')
 
-    return render(request, 'yoga_website/contact.html', {'mail_form': mail_form, 'var_color': var_color,
+    return render(request, 'yoga_website/contact_mail.html', {'mail_form': mail_form, 'var_color': var_color,
                                                          'admin': admin, 'user1': user1})
 
 
@@ -374,12 +374,12 @@ def reset_password(request):
 
         if form_password.is_valid():
             username = form_password.cleaned_data["username"]
-            adresse_mail = form_password.cleaned_data["adresse_mail"]
+            adresse_mail = form_password.cleaned_data["mail_adress"]
             if username == "":
                 username = "null"
-            if adresse_mail == "":
+            elif adresse_mail == "":
                 adresse_mail = "null"
-            return redirect("resset_password_step", username=username, adresse_mail=adresse_mail,)
+            return redirect("resset_password_step", username=username, adresse_mail=adresse_mail)
         else:
             error = True
     else:
@@ -389,36 +389,36 @@ def reset_password(request):
                                                                 'form_password': form_password})
 
 
-def reset_password_step_2(request, username, adresse_mail):
-    username, adresse_mail = username, adresse_mail
-    utilisateur, echec = None, False
+def reset_password_step_2(request, username, email_adress):
+    username, email_adress = username, email_adress
+    user, echec = None, False
 
     """On détermine l'utilisateur"""
-    if username == "null" and adresse_mail == "null":
+    if username == "null" and email_adress == "null":
         echec = True
     else:
         try:
-            utilisateur = User.objects.get(email=adresse_mail)
-            secret_entrance = SecretCode.objects.get_or_create(user=utilisateur)
-            secret_entrance = SecretCode.objects.get(user=utilisateur)
+            user = User.objects.get(email=email_adress)
+            secret_entrance = SecretCode.objects.get_or_create(user=user)
+            secret_entrance = SecretCode.objects.get(user=user)
             """Mail contenant le code secret"""
             subject = "Demande changement du mot de passe sur melodyoga"
             adresse_mail = mail_soph
-            body = f"Bonjour {utilisateur.username} Voici votre code secret {secret_entrance.code} " \
+            body = f"Bonjour {user.username} Voici votre code secret {secret_entrance.code} " \
                    f"Celui-ci vous sera demandé à l'étape suivante pour modifier votre mot de passe"
-            email_confirm = EmailMessage(subject, body, adresse_mail, [utilisateur.email])
+            email_confirm = EmailMessage(subject, body, email_adress, [user.email])
             email_confirm.send()
-            username = utilisateur.username
+            username = user.username
         except:
             try:
-                utilisateur = User.objects.get(username=username)
-                secret_entrance = SecretCode.objects.get(user=utilisateur)
+                user = User.objects.get(username=username)
+                secret_entrance = SecretCode.objects.get(user=user)
                 """Mail contenant le code secret"""
                 subject = "Demande changement du mot de passe sur melodyoga"
                 adresse_mail = mail_soph
-                body = f"Bonjour {utilisateur.username} Voici votre code secret {secret_entrance.code} " \
+                body = f"Bonjour {user.username} Voici votre code secret {secret_entrance.code} " \
                        f"Celui-ci vous sera demandé à l'étape suivante pour modifier votre mot de passe"
-                email_confirm = EmailMessage(subject, body, adresse_mail, [utilisateur.email])
+                email_confirm = EmailMessage(subject, body, email_adress, [user.email])
                 email_confirm.send()
 
             except:
@@ -432,20 +432,20 @@ def reset_password_step_2(request, username, adresse_mail):
             password = str(form_password.cleaned_data["password"])
 
             if str(code) == str(secret_entrance.code):
-                utilisateur.set_password(password)
-                utilisateur.save()
+                user.set_password(password)
+                user.save()
                 """On attribue un nouveau code secret pour l'avenir"""
                 code_secret = str(random.randint(10000, 100000))
-                secret_entrance = SecretCode.objects.get(user=utilisateur)
+                secret_entrance = SecretCode.objects.get(user=user)
                 secret_entrance.code = str(code_secret)
                 secret_entrance.save()
 
                 """Confirmation changement de mot de passe"""
                 subject = "Mot de passe modifié Melodyoga"
                 adresse_mail = mail_soph
-                body = f"{utilisateur.username} Nous vous confirmons le changement de mot de passe " \
+                body = f"{user.username} Nous vous confirmons le changement de mot de passe " \
                        f"suite à votre procédure sur notre site"
-                email_confirm = EmailMessage(subject, body, adresse_mail, [utilisateur.email])
+                email_confirm = EmailMessage(subject, body, email_adress, [user.email])
                 email_confirm.send()
 
                 """Redirection"""
@@ -461,10 +461,10 @@ def reset_password_step_2(request, username, adresse_mail):
 
     return render(request, 'yoga_website/reset_password_step.html', {'var_color': var_color, 'admin': admin,
                                                                      'form_password': form_password, 'echec': echec,
-                                                                     'utilisateur': utilisateur, "username": username})
+                                                                     "username": username})
 
 
-def delete_compte(request):
+def delete_account(request):
     user = request.user
     user1 = user_actif(request)
 
@@ -486,10 +486,10 @@ def delete_compte(request):
 
     """Supprimer les inscriptions aux ateliers"""
     if user1 == "client":
-        compte_delete = Client.objects.get(user=user)
-        for i in Inscribe.objects.filter(client=compte_delete):
+        user_account = Client.objects.get(user=user)
+        for i in Inscribe.objects.filter(client=user_account):
             i.delete()
-        compte_delete.delete()
+        user_account.delete()
         user.delete()
 
     else:
@@ -502,6 +502,5 @@ def delete_compte(request):
            f"En vous souhaitant une bonne journée"
     email_confirm = EmailMessage(subject, body, adresse_mail, [user.email, adresse_mail])
     email_confirm.send()
-
 
     return redirect('home')

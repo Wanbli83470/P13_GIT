@@ -1,4 +1,4 @@
-{% extends 'yoga_website/bienvenu.html' %}
+{% extends 'yoga_website/home.html' %}
 {% load static %}
 {% block title %}
 Mon espace
@@ -18,8 +18,8 @@ Mon espace
         <ul class="text-vert">
                 <li> <h4> <strong>Nom : </strong>{{ client.last_name }}</h4></li>
                 <li> <h4> <strong>Prénom : </strong>{{ client.first_name }}</h4></li>
-                <li> <h4> <strong>N° : </strong>{{ client.tel }}</h4></li>
-                <li> <h4> <strong>Email : </strong>{{ client.email }}</h4></li>
+                <li> <h4> <strong>N° : </strong>{{ client.Phone }}</h4></li>
+                <li> <h4> <strong>Email : </strong>{{ client.mail_adress }}</h4></li>
         </ul>
     </div>
 
@@ -60,7 +60,7 @@ Mon espace
 
         <ul>
             <li><h4><a href="{% static 'yoga_website/'%}{{ path_pdf }} "> Télécharger mon formulaire </a></h4></li>
-            <li><h4><a href="{% url 'upload' %}">Envoyer mon formulaire d'adhésion</a></h4></li>
+            <li><h4><a href="{% url 'upload_pdf' %}">Envoyer mon formulaire d'adhésion</a></h4></li>
         </ul>
 
     {% else %}
@@ -95,7 +95,7 @@ Mon espace
     <div class="modal-dialog p-5">
         <div class="modal-content p-5 center-block text-center">
             <h3>Souhaitez-vous supprimer <strong> définitivement </strong> votre compte ? </h3>
-            <a href="{% url 'delete_compte'%}">
+            <a href="{% url 'delete_account'%}">
                 <button type="button" class="btn btn-outline-danger center-block">Supprimer mon compte</button>
             </a>
 

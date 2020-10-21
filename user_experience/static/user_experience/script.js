@@ -110,26 +110,6 @@ $(document).ready(function(){
     );
   });
 
-  $("#show_music").mouseenter(function(){
-    $(this).removeClass("bg-vert").fadeIn(1000);
-    $(this).addClass("bg-vert2").fadeIn(1000);
-  });
-
-  $("#show_music").mouseleave(function(){
-    $(this).removeClass("bg-vert2").fadeIn(1000);
-    $(this).addClass("bg-vert").fadeIn(1000);
-  });
-
-  $("#show_video").mouseenter(function(){
-    $(this).removeClass("bg-vert").fadeIn(1000);
-    $(this).addClass("bg-vert2").fadeIn(1000);
-  });
-
-  $("#show_video").mouseleave(function(){
-    $(this).removeClass("bg-vert2").fadeIn(1000);
-    $(this).addClass("bg-vert").fadeIn(1000);
-  });
-
 var DeleteAjax = $(".DeleteAjax");
 var idAtelier = $(".DeleteAjax");
 DeleteAjax.click(function(event){

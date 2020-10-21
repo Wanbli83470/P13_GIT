@@ -68,7 +68,7 @@ def yoga(request):
 def nidra(request):
     """Special information page on yoga nidra"""
     user1 = user_actif(request)
-    return render(request, "content_static/nidra.html", {'video': video, 'var_color': var_color,
+    return render(request, "content_static/nidra.html", {'var_color': var_color,
                                                        'user1': user1})
 
 

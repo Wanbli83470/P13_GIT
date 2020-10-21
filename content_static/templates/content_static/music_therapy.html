@@ -1,11 +1,16 @@
 {% extends 'content_static/home.html' %}
 {% block title %} Mediathèque {% endblock %}
 {% block content %}
-<h1 class="text-center"><small class="text-muted"> Selectionner la rubrique que vous souhaiter consulter (Vidéo/Musique) </small></h1><hr>
-<div class="p-5 row align-items-center">
-    <div id="show_video" class="col-sm-12 text-center text-white bg-vert border rounded-pill border-primary "> <a href="#"> <h1 class="text-white">Vidéo</h1> </a> </div>
-    <div id="show_music" class="col-sm-12 text-center text-white bg-vert border rounded-pill border-primary mt-5"> <a href="#"> <h1 class="text-white">Musicothérapie</h1> </a> </div>
+<h1 id="rubrique" class="text-center"><small class="text-primary"> Selectionnez la rubrique que vous souhaitez consulter </small></h1><hr>
+<div id="select" class="container-fluid sticky-top bg-light pt-2">
+    <div class="row border-left rounded-left border-primary">
+        <div id="show_music" class="col-sm-6 col-lg-6 border-right text-warning text-center"> <a href="#yoga_description"> <h3>Musicothérapie</h3> </a></div>
+        <div id="show_video" class="col-sm-6 col-lg-6 border-right text-center"> <a href="#posture"> <h3> Vidéo </h3> </a> </div>
+    </div>
 </div>
+
+
+
 
 <div id="vidéo" class="bg-white  p-5">
     <h1 class="text-center">Vidéo</h1>

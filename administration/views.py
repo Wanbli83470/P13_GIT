@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from user_experience.models import *
 from user_experience.forms import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import (
+    CreateView,
+    )
 var_color = "vert"
 admin = False
 
@@ -80,3 +84,8 @@ def clients(request):
     return render(request, 'administration/clients.html', {"client": client, "form": form, 'var_color': var_color,
                                                          'admin': admin, 'user1': user1})
 
+
+class CreateAteliersView(LoginRequiredMixin, CreateView):
+    model = Workshop
+    fields = ['type', 'nb_places', 'date', 'location', 'places']
+    template_name = 'administration/atelier_form.html'

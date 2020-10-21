@@ -3,16 +3,10 @@ import random
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, Http404
 from .forms import *
-from .quote import quote_day
 from django.core.mail import EmailMessage
 from django.urls import reverse
-from django.views.generic import (
-    ListView,
-    CreateView,
-    )
 from django.contrib.auth.models import User
 from user_experience.models import Workshop, Client, Inscribe, PdfOutput, SecretCode, PdfInput
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -30,6 +24,7 @@ mail_soph = os.environ.get("ADRESS_P13_MAIL")
 
 
 def user_actif(request):
+    """Assign a status to the logged in user to modify their functions"""
     list_client = []
     for c in Client.objects.all():
         list_client.append(str(c.user))
@@ -55,10 +50,10 @@ def user_actif(request):
     return user1
 
 
-def home(request):
-    user1 = user_actif(request)
-    return render(request, "user_experience/home.html", {'quote_day': quote_day,
-                                                          'var_color': var_color, 'admin': admin, 'user1': user1})
+def get_id_client(request):
+    username = request.user
+    client = Client.objects.get(user=username)
+    return client.id
 
 
 def workshop(request):
@@ -82,21 +77,6 @@ def workshop(request):
                                                               'participants': participants})
     else:
         return redirect("home")
-
-
-"""Administrator's function"""
-
-
-def get_id_client(request):
-    username = request.user
-    client = Client.objects.get(user=username)
-    return client.id
-
-
-class CreateAteliersView(LoginRequiredMixin, CreateView):
-    model = Workshop
-    fields = ['type', 'nb_places', 'date', 'location', 'places']
-    template_name = 'user_experience/atelier_form.html'
 
 
 """User function"""
@@ -148,6 +128,7 @@ def registration_valid(request, username, email):
 
 
 def connection(request):
+    """Login function with email or username with "authenticate" methods"""
     user1 = user_actif(request)
     error = False
     email_user = User.objects.all()
@@ -180,6 +161,7 @@ def connection(request):
 
 
 def my_espace(request):
+    """Personal space to view workshops and see each user's information"""
     user1 = user_actif(request)
     """Update the data user"""
     user_modif = UserModif()
@@ -223,7 +205,6 @@ def my_espace(request):
         else:
             user_modif = UserModif()
 
-
         """Display of workshops"""
         path_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
         name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
@@ -233,7 +214,6 @@ def my_espace(request):
         nb_registered = len(registered)
         id_registered = [int(l) for l in str(registered) if l.isdecimal()]
         workshop = Workshop.objects.order_by('date')
-        id_ateliers = [i.id for i in workshop]
     else:
         pass
     return render(request, "user_experience/my_espace.html", {'var_color': var_color, 'admin': admin,
@@ -245,6 +225,7 @@ def my_espace(request):
 
 
 def upload_file(request):
+    """Page to host the paper form completed by the user"""
     user = request.user
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -262,6 +243,7 @@ def upload_file(request):
 
 
 def contact_email(request):
+    """Email contact form to speak to the administrator"""
     user1 = user_actif(request)
     form_class = MailForm
     mail_form = form_class(request.POST or None)
@@ -282,12 +264,12 @@ def contact_email(request):
 
 
 def inscribe_workshop(request, id_workshop, id_client):
+    """Focntion registering a workshop and sending an email to the client"""
     user1 = user_actif(request)
 
     username = str(request.user)
     email = Client.objects.get(id=id_client)
     email = email.mail_adress
-
     workshop = Workshop.objects.get(id=id_workshop)
     client = Client.objects.get(id=id_client)
     Inscribe(client=client, workshop=workshop).save()
@@ -302,6 +284,7 @@ def inscribe_workshop(request, id_workshop, id_client):
 
 
 def unsubscribe_workshop(request, id_workshop, id_client):
+    """Focntion to unsubscribe a customer from the workshop + confirmation email"""
     user1 = user_actif(request)
 
     workshop = Workshop.objects.get(id=id_workshop)
@@ -361,12 +344,6 @@ def detail_workshop(request, id_workshop, id_client):
         return redirect('home')
 
 
-class AtelierListView(ListView):
-    model = Workshop
-    template_name = 'user_experience/ateliers.html'
-    context_object_name = "ateliers"
-
-
 def disconnection(request):
     user1 = user_actif(request)
     global var_color
@@ -403,13 +380,12 @@ def reset_password_step_2(request, username, email_adress):
     username, email_adress = username, email_adress
     user, echec = None, False
 
-    """On détermine l'utilisateur"""
+    """1) Send the secret code"""
     if username == "null" and email_adress == "null":
         echec = True
     else:
         try:
             user = User.objects.get(email=email_adress)
-            secret_entrance = SecretCode.objects.get_or_create(user=user)
             secret_entrance = SecretCode.objects.get(user=user)
             """Mail contenant le code secret"""
             subject = "Demande changement du mot de passe sur melodyoga"
@@ -434,6 +410,7 @@ def reset_password_step_2(request, username, email_adress):
             except:
                 echec = True
 
+    """1) Send the secret code"""
     if request.method == "POST":
         form_password = ResetPasswordStep2(request.POST)
 
@@ -475,6 +452,7 @@ def reset_password_step_2(request, username, email_adress):
 
 
 def delete_account(request):
+    """User delete function. With the elimination of workshops and data attached to the client"""
     user = request.user
     user1 = user_actif(request)
 

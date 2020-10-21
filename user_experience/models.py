@@ -32,7 +32,7 @@ class Workshop(models.Model):
             .format(self.type, self.date, self.nb_places, self.id)
 
     def get_absolute_url(self):
-        return reverse('ateliers')
+        return reverse('home')
 
 
 class Client(models.Model):

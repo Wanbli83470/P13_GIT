@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .generate_pdf import generate_pdf
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, Http404
 from django.urls import reverse
 
@@ -86,12 +87,21 @@ def register(request):
     """Registration page for new users"""
     user1 = user_actif(request)
     error = False
+    email_used = False
+    email_user = User.objects.all()
+    email_user1 = []
+    for i in email_user:
+        print(i.email)
+        email_user1.append(i.email)
+
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                raise ValidationError("Email already exists")
             messages.success(request, f'Votre compte {username} est crée')
             generate_pdf(email=email, username=username)
             user_save = User.objects.get(username=username)

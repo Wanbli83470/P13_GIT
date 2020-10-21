@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Client
-
+from django.core.exceptions import ValidationError
 
 class RegistrationForm(UserCreationForm):
     """Account creation form"""
@@ -15,6 +15,12 @@ class RegistrationForm(UserCreationForm):
             'username',
             'email',
         )
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Email exists")
+        return self.cleaned_data
 
 
 class ConnectionForm(forms.Form):

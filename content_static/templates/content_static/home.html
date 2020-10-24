@@ -44,7 +44,7 @@
         {% if user1 == "admin" %}
             <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'workshop' %}"><h3>Ateliers</h3></a>
             <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'clients'%}"><h3>Clients</h3></a>
-            <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'espace' %}"><h3> <i class="fas fa-leaf"></i> {{ user.username }} </h3></a>
+            <a class="nav-item nav-link text-{{ var_color }} mr-5 ml-1" href="{% url 'admin:index' %}"><h3> <i class="fas fa-leaf"></i> {{ user.username }} </h3></a>
               <a href="#" data-toggle="modal" data-target="#infos" class="nav-item nav-link text-{{ var_color }} mr-5"><h3>Déconnexion</h3></a>
 
                 <div class="modal p-5" id="infos">

@@ -2,6 +2,10 @@
 {% block title %} DetailAtelier {% endblock title %}
 {% load crispy_forms_tags %}
 {% block content %}
+
+<!-- Workshop information page only for the clients -->
+
+<!-- Various information -->
 <div class="p-3 bg-white shadow-lg text-center">
 
     <h2>Places : <strong class="text-vert">{{ workshop.nb_places }}</strong></h2><br>
@@ -9,23 +13,30 @@
     <h2>Lieux : <strong class="text-vert">{{ workshop.location }}</strong></h2><br>
     <h2>Type de séance : <strong class="text-vert">{{ workshop.type }}</strong></h2><br>
     <h2>Date : <strong class="text-vert">{{ workshop.date }}</strong></h2><br>
-{% if places %}
 
+<!-- Registration management -->
+{% if places %}
+    <!-- If user not registered -->
     {% if go_inscribe %}
         <a href="{% url 'inscribe' id_workshop id_client %}">
             <button class="btn btn-lg rounded bg-vert d-inline border border-dark text-white text-center d-block mx-auto btn-lg">Je m'inscris</button>
         </a>
+
+    <!-- If user is registered -->
     {% else %} <hr>
         <h1 class="text-muted">Vous êtes déjà inscrit pour cet atelier</h1>
         <hr>
-
         <a href="{% url 'unsubscribe' id_workshop id_client %}">
             <button class="btn btn-lg rounded bg-vert d-inline border border-dark text-white text-center d-block mx-auto btn-lg">Se désinscrire</button>
         </a>
+
+        
     {% endif %}
 
+<!-- if number of places reached -->
 {% else %}
     <h1 class="text-muted">Le nombre de place limite est atteinte</h1>
 {% endif %}
+
 </div>
 {% endblock content %}

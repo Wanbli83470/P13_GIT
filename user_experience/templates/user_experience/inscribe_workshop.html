@@ -3,10 +3,17 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
+
+<!-- Confirmation page for workshop registration -->
 <h1 class="text-center">Confirmation de votre participation enregistré : Vous allez être redirigé dans 5 secondes vers notre page d'accueil. </h1>
+
+
+<!-- Redirection in JavaScript to the home page -->
 <script>
     setTimeout(function(){
         window.location.href = '{% url 'home' %}';
     }, 5000);
 </script>
+
+
 {% endblock content %}

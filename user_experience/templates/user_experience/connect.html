@@ -2,32 +2,41 @@
 {% block title %} Connexion {% endblock title %}
 {% load crispy_forms_tags %}
 {% block content %}
+
+<!-- Login HTML page -->
+
+
 <div class="container-fluid p-3 text-white text-center">
     <div class="shadow-lg p-4 mb-4 rounded" style="background-image: radial-gradient(circle at center, #7f9e29, #F4FFC8)";>
         <h1>Se connecter</h1>
 
+        <!-- If error during the first entry -->
         {% if error %}
         <p><strong>Utilisateur inconnu ou mauvais de mot de passe.</strong></p>
         {% endif %}
 
+        <!-- If user already logged in -->
         {% if user.is_authenticated %}
         Vous êtes connecté, {{ user.username }} !
-        {% else %}
 
+        <!-- Login form -->
+        {% else %}
         <form class="w-50 text-center d-block mx-auto" action="{% url 'connection' %}" method="post">
             {% csrf_token %}
             {{ form|crispy }}
             <button type="submit" value="Se connecter" class="btn btn-outline-light">Se connecter</button>
         </form>
         {% endif %}
+
     </div>
 
+        <!-- Links to password reset page -->
         <a href="{% url 'reset_password' %}">
             <div class="center-block text-center">
                 <button type="button" class="btn btn-outline-primary btn-lg">Mots de passe oublié ?</button>
             </div>
         </a>
+        
 </div>
-
 
 {% endblock content %}

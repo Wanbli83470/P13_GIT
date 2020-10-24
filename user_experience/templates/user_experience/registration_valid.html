@@ -1,16 +1,21 @@
 {% extends 'content_static/home.html' %}
 {% block title %} Inscription Réussi {% endblock title %}
 
+<!-- Confirmation page for registration with the Melodyoga association -->
+
 {% block content %}
-<h1 class="mt-3 text-center text-{{ var_color }}">Bonjour {{ username }} ! Votre inscription a bien été prise en compte, vous recevrez un mail de confirmation d'ici quelques minutes.
-Afin de valider votre inscription vous recevrez un formulaire à remplir.
-</h1>
+<h1 class="mt-3 p-2 text-center text-{{ var_color }}">Bonjour <strong> {{ username }}  </strong> ! Votre inscription a bien été prise en compte, vous recevrez un mail de confirmation d'ici quelques minutes.
+Afin de valider votre inscription vous recevrez un formulaire à remplir à l'adresse : {{ email }} </h1>
 <br>
-<h1 class="mt-3 text-center text-{{ var_color }}">A l'adresse : {{ email }} </h1>
+<h1>Ce formulaire sera toujours disponible dans votre espace personnel</h1>
+<br>
 <h2 class="text-center text-{{ var_color }}">Vous serez rediriger dans 10 secondes vers notre page d'accueil</h2>
+
+<!-- Redirection in JavaScript to the home page -->
 <script>
     setTimeout(function(){
         window.location.href = '{% url 'home' %}';
     }, 10000);
 </script>
+
 {% endblock content %}

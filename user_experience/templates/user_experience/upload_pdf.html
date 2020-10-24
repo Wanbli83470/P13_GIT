@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
+<!-- Page to send the Paper form to the site administrator -->
         <form enctype="multipart/form-data" class="w-50 text-center d-block mx-auto" action="{% url 'upload' %}" method="post">
             {% csrf_token %}
             {{ form|crispy}}

@@ -1,17 +1,20 @@
 {% extends 'content_static/home.html' %}
 {% block title %} Ateliers {% endblock %}
+
 {% block content %}
 <div id="ateliers" class="container-fluid bg-vert ateliers p-5" style="background-image: radial-gradient(circle at center, #7f9e29, #F4FFC8)">
 
-
-{% if user1 == "client" %}
-{% else %}
+<!-- Workshop creation by the administrator -->
+{% if user1 == "admin" %}
     <a href="{% url 'create-atelier'%}">
             <button class="text-white btn btn-{{ var_color }} text-center d-block mx-auto btn-lg"> <strong> Créer un atelier </strong> </button>
     </a>
+{% else %}
 {% endif %}
 
-    <h1 class="text-white text-center">Les prochains ateliers : </h1>
+<!-- Display of workshops opened -->
+
+<h1 class="text-white text-center">Les prochains ateliers : </h1>
 
 <hr class="border border-white">
 
@@ -19,48 +22,62 @@
 
     {% if l.places == True %}
         <div id="atelier{{l.id}}" class="container bg-light mt-5 p-4 rounded shadow-lg ateliers border border-primary">
+            <!-- Client view -->
             {% if user1 == "client" %}
                 <h2> {{  l.type }} -- {{ l.date }} </h2>
                 <h3> Lieux : {{ l.lieux }}</h3>
+
+
+                <!-- if registered -->
                  {% if l.id not in participants %}
                     <a href="{% url 'detailWorkshop'  l.id id_client %}">
                         <button type="button" class="btn btn-lg btn-outline-primary text-center mt-2"> <strong>  >>> Details et inscription </strong> </button>
                     </a>
+
+                 <!-- not registered -->   
                  {% else %}
                     <a href="{% url 'detailWorkshop'  l.id id_client %}">
                         <button type="button" class="btn btn-lg btn-outline-secondary text-center mt-2"> <strong>  >>> Me désinscrire </strong> </button>
                     </a>
                  {% endif %}
 
-
+            <!-- Admin view -->
             {% else %}
+
+                <!-- Ajax request for deletion -->
                 <form class="DeleteAjax" method="POST" action="{% url 'deleteWorkshop' l.id %}" > {% csrf_token %}
                     <button class="btn btn-lg rounded bg-primary d-inline float-right border border-dark"><i class="fas fa-trash-alt text-white"></i></button>
                 </form>
                 <h2> {{  l.type }} -- {{ l.date }} </h2>
                 <h3> Lieux : {{ l.lieux }}</h3>
-                <p>Participants : {{l.participants}}</p>
+                <p>Participants : {{l.participants}}</p>               
+                <!-- View participants -->
                 <h3 class="bg-primary text-white d-inline p-2 rounded-right"> <strong> ID : {{l.id}} </strong> </h3>
-
                 <a href="{% url 'participants' l.id %}"><button class="bg-violet float-right btn btn-lg text-white d-inline rounded-right"><strong>Gestion des participants </strong> </button></a>
             {% endif %}
         </div>
 
+
+<!-- Display of workshops closed -->
     {% else %}
 
         <div id="atelier{{l.id}}" class="container bg-light mt-5 p-4 rounded shadow-lg ateliers border border-danger">
             <h2> {{  l.type }} -- {{ l.date }} </h2>
-
             <h3> Lieux : {{ l.lieux }}</h3>
+
+
+            <!-- Client view -->
             {% if user1 == "client" %}
                 <h2> {{  l.type }} -- {{ l.date }} </h2>
                 <h3> Lieux : {{ l.lieux }}</h3>
                 <p> Plus de places disponibles pour cet atelier. </p>
             {% else %}
+
+             <!-- Admin view -->
                 <form class="DeleteAjax" method="POST" action="{% url 'deleteAtelier' l.id %}" > {% csrf_token %}
                     <button class="btn btn-lg rounded bg-primary d-inline float-right border border-dark"><i class="fas fa-trash-alt text-white"></i></button>
                 </form>
-
+                <!-- View participants -->
                 <h2> {{  l.type }} -- {{ l.date }} </h2>
                 <h3> Lieux : {{ l.lieux }}</h3>
                 <p>Participants : {{l.participants}}</p>
@@ -71,6 +88,8 @@
 
     {% endif %}
 
+
+<!-- If no workshop -->
 
     {% empty %}
 

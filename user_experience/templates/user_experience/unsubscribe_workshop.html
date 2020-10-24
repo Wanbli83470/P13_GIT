@@ -3,7 +3,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<h1 class="text-center">Annulation de votre participation enregistré : Vous allez être redirigé dans 5 secondes vers notre page d'accueil. </h1>
+<!-- Page to confirm the deletion of a workshop -->
+
+<h1 class="text-center ">Annulation de votre participation enregistré : Vous allez être redirigé dans 5 secondes vers notre page d'accueil. </h1>
+
+<!-- Redirection to reception -->
+
 <script>
     setTimeout(function(){
         window.location.href = '{% url 'home' %}';

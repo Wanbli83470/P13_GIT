@@ -40,7 +40,7 @@ class Client(models.Model):
     user = models.OneToOneField(User, on_delete=ChildProcessError)
     first_name = models.CharField(max_length=254, default="test")
     last_name = models.CharField(max_length=255)
-    Phone = models.CharField(max_length=255)
+    Phone = models.CharField(max_length=10)
     date = models.DateTimeField(default=timezone.now)
     mail_adress = models.EmailField(max_length=254)
 

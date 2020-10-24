@@ -50,7 +50,12 @@ Mon espace
             {{ user_modif|crispy}}
             <button type="submit" class="btn btn-outline-primary">Modifier mes informations</button>
         </form>
-
+        <br>
+        <a href="{% url 'resset_password_step' user.username user.email  %}">
+            <div class="center-block text-center">
+                <button type="button" class="btn btn-outline-danger btn-lg">Changer mon mot de passe</button>
+            </div>
+        </a>
     </div>
 {% else %}
 {% endif %}
@@ -75,6 +80,12 @@ Mon espace
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Modifier mes informations :</h1>
     </div>
+    <br>
+    <a href="{% url 'resset_password_step' user.username user.email  %}">
+        <div class="center-block text-center">
+            <button type="button" class="btn btn-outline-danger btn-lg">Changer mon mot de passe</button>
+        </div>
+    </a>
 
 {% else %}
 {% endif %}

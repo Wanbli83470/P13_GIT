@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .generate_pdf import generate_pdf
+from .generate_pdf import ExportPdf
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, Http404
 from django.urls import reverse
@@ -25,6 +25,7 @@ mail_soph = os.environ.get("ADRESS_P13_MAIL")
 
 
 def user_actif(request):
+
     """Assign a status to the logged in user to modify their functions"""
     list_client = []
     for c in Client.objects.all():
@@ -34,7 +35,7 @@ def user_actif(request):
     global admin
     my_user = str(request.user)
     user = str
-    if my_user == "thomas":
+    if request.user.is_superuser:
         var_color = "violet"
         admin = True
         user1 = "admin"
@@ -100,10 +101,8 @@ def register(request):
             form.save()
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
-            if User.objects.filter(email=email).exists():
-                raise ValidationError("Email already exists")
             messages.success(request, f'Votre compte {username} est crée')
-            generate_pdf(email=email, username=username)
+            ExportPdf.generate_pdf(email=email, username=username)
             user_save = User.objects.get(username=username)
             PdfInput(user=user_save, pdf_file=f"user_experience/static/user_experience/formulaire_adhésion_{username}.pdf").save()
             SecretCode(user=user_save).save()
@@ -111,7 +110,7 @@ def register(request):
         else:
             error = True
     else:
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm()
 
     return render(request, 'user_experience/register.html', {'form': form, 'var_color': var_color,
                                                           'admin': admin, 'user1': user1})
@@ -174,58 +173,44 @@ def my_espace(request):
     """Personal space to view workshops and see each user's information"""
     user1 = user_actif(request)
     """Update the data user"""
-    user_modif = UserModif()
     user = request.user
-    path_pdf, registered, client, nb_registered, id_registered, workshop = None, None, None, None, None, None
+    path_pdf, registered, nb_registered, id_registered, workshop = None, None, None, None, None
+    client = Client.objects.get(user=user)
     pdf_input = PdfInput(user=user)
     pdf_input = pdf_input.pdf_file
     pdf_send = False
-    if user1 != "admin":
-        if user1 == "client_not_active":
-            try:
-                pdf_send = PdfOutput.objects.get(user=user)
-                pdf_send = True
-            except PdfOutput.DoesNotExist:
-                pdf_send = False
-            if request.method == "POST":
-                user_modif = UserModif(request.POST)
-                if user_modif.is_valid():
-                    username = user_modif.cleaned_data["username"]
-                    adresse_mail = user_modif.cleaned_data["adresse_mail"]
-                    password = user_modif.cleaned_data["password"]
-                else:
-                    error = True
-
-        elif user1 == "client":
-            client = Client.objects.get(user=user)
+    """On modifie un client"""
+    if user1 == "client":
+        if request.method == "POST":
+            user_modif = ClientModif(request.POST or None)
             if user_modif.is_valid():
                 username = user_modif.cleaned_data["username"]
-                adresse_mail = user_modif.cleaned_data["adresse_mail"]
-                password = user_modif.cleaned_data["password"]
+                email_adress = user_modif.cleaned_data["email_adress"]
                 phone = user_modif.cleaned_data["phone"]
-                """Modif"""
-                client.phone = phone
-                client.mail_adress = adresse_mail
-                user.set_password(password)
-                user.username = username
-                user.email = adresse_mail
-                user.save()
+                print(phone)
+                user_ = User.objects.get(username=user.username)
+                user_.username, user_.email = username, email_adress
+                user_.save()
+                client.mail_adress = email_adress
+                client.Phone = phone
                 client.save()
-
+            else:
+                print("error")
         else:
-            user_modif = UserModif()
+            user_modif = ClientModif()
 
-        """Display of workshops"""
-        path_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
-        name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
-        pdf_bdd = PdfInput.objects.get(user=user)
-        pdf_bdd.save()
-        registered = Inscribe.objects.filter(client=client)
-        nb_registered = len(registered)
-        id_registered = [int(l) for l in str(registered) if l.isdecimal()]
-        workshop = Workshop.objects.order_by('date')
-    else:
-        pass
+
+
+    """Display of workshops"""
+    path_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
+    name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
+    pdf_bdd = PdfInput.objects.get(user=user)
+    pdf_bdd.save()
+    registered = Inscribe.objects.filter(client=client)
+    nb_registered = len(registered)
+    id_registered = [int(l) for l in str(registered) if l.isdecimal()]
+    workshop = Workshop.objects.order_by('date')
+
     return render(request, "user_experience/my_espace.html", {'var_color': var_color, 'admin': admin,
                                                         'user1': user1, 'name_pdf': name_pdf, 'path_pdf': path_pdf,
                                                         'registered': registered, 'client': client,
@@ -372,11 +357,15 @@ def reset_password(request):
         if form_password.is_valid():
             username = form_password.cleaned_data["username"]
             adresse_mail = form_password.cleaned_data["mail_adress"]
-            if username == "":
+
+            if username == "" and adresse_mail == "":
+                return redirect("reset_password")
+            elif username == "":
                 username = "null"
             elif adresse_mail == "":
                 adresse_mail = "null"
-            return redirect("resset_password_step", username=username, adresse_mail=adresse_mail)
+
+            return redirect("resset_password_step", username=username, email_adress=adresse_mail)
         else:
             error = True
     else:
@@ -388,8 +377,7 @@ def reset_password(request):
 
 def reset_password_step_2(request, username, email_adress):
     username, email_adress = username, email_adress
-    user, echec = None, False
-
+    user, echec, error = None, False, False
     """1) Send the secret code"""
     if username == "null" and email_adress == "null":
         echec = True
@@ -402,7 +390,7 @@ def reset_password_step_2(request, username, email_adress):
             adresse_mail = mail_soph
             body = f"Bonjour {user.username} Voici votre code secret {secret_entrance.code} " \
                    f"Celui-ci vous sera demandé à l'étape suivante pour modifier votre mot de passe"
-            email_confirm = EmailMessage(subject, body, email_adress, [user.email])
+            email_confirm = EmailMessage(subject, body, adresse_mail, [user.email])
             email_confirm.send()
             username = user.username
         except:
@@ -414,7 +402,7 @@ def reset_password_step_2(request, username, email_adress):
                 adresse_mail = mail_soph
                 body = f"Bonjour {user.username} Voici votre code secret {secret_entrance.code} " \
                        f"Celui-ci vous sera demandé à l'étape suivante pour modifier votre mot de passe"
-                email_confirm = EmailMessage(subject, body, email_adress, [user.email])
+                email_confirm = EmailMessage(subject, body, adresse_mail, [user.email])
                 email_confirm.send()
 
             except:
@@ -427,7 +415,7 @@ def reset_password_step_2(request, username, email_adress):
         if form_password.is_valid():
             code = form_password.cleaned_data["code"]
             password = str(form_password.cleaned_data["password"])
-
+            error = False
             if str(code) == str(secret_entrance.code):
                 user.set_password(password)
                 user.save()
@@ -442,15 +430,13 @@ def reset_password_step_2(request, username, email_adress):
                 adresse_mail = mail_soph
                 body = f"{user.username} Nous vous confirmons le changement de mot de passe " \
                        f"suite à votre procédure sur notre site"
-                email_confirm = EmailMessage(subject, body, email_adress, [user.email])
+                email_confirm = EmailMessage(subject, body, adresse_mail, [user.email, adresse_mail])
                 email_confirm.send()
 
                 """Redirection"""
                 return redirect("home")
-
             else:
-                pass
-
+                error = True
         else:
             error = True
     else:
@@ -458,7 +444,7 @@ def reset_password_step_2(request, username, email_adress):
 
     return render(request, 'user_experience/reset_password_step.html', {'var_color': var_color, 'admin': admin,
                                                                      'form_password': form_password, 'echec': echec,
-                                                                     "username": username})
+                                                                     "username": username, 'error': error})
 
 
 def delete_account(request):

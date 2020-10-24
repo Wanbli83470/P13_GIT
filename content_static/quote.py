@@ -2,10 +2,7 @@ import time
 from datetime import datetime, date, time
 today = datetime.now()
 today = today.date()
-test = datetime(2019, 3, 21, 0, 0)
-
 week = today.isocalendar()
-
 week = week[1]
 
 line = ["Celui qui est le maître de lui-même est plus grand que celui qui est le maître du monde.",

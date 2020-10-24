@@ -1,20 +1,20 @@
 from reportlab.pdfgen import canvas
 
+class ExportPdf:
+    def generate_pdf(email, username):
+        pdf = canvas.Canvas(f"user_experience/static/user_experience/formulaire_adhésion_{username}.pdf")
+        pdf.drawString(200, 800, "Formulaire d'adhésion : ")
+        pdf.drawString(130, 770, "Association Melodyoga 1496 quartier des longuettes")
+        pdf.drawString(170, 790, "."*53)
+        pdf.drawString(50, 680, "Username : {} ".format(username))
 
-def generate_pdf(email, username):
-    pdf = canvas.Canvas(f"user_experience/static/user_experience/formulaire_adhésion_{username}.pdf")
-    pdf.drawString(200, 800, "Formulaire d'adhésion : ")
-    pdf.drawString(130, 770, "Association Melodyoga 1496 quartier des longuettes")
-    pdf.drawString(170, 790, "."*53)
-    pdf.drawString(50, 680, "Username : {} ".format(username))
+        pdf.drawString(50, 650, "Prénom : ")
+        pdf.drawString(50, 620, "Nom : ")
+        pdf.drawString(50, 590, "Email : {} ".format(email))
+        pdf.drawString(50, 560, "Téléphone : ")
 
-    pdf.drawString(50, 650, "Prénom : ")
-    pdf.drawString(50, 620, "Nom : ")
-    pdf.drawString(50, 590, "Email : {} ".format(email))
-    pdf.drawString(50, 560, "Téléphone : ")
-
-    pdf.drawString(50, 450, "Date de naissance : ")
-    pdf.drawString(50, 100, "Date : ")
-    pdf.drawString(420, 100, "Signature" + "."*30)
-    pdf.showPage()
-    pdf.save()
+        pdf.drawString(50, 450, "Date de naissance : ")
+        pdf.drawString(50, 100, "Date : ")
+        pdf.drawString(420, 100, "Signature" + "."*30)
+        pdf.showPage()
+        pdf.save()

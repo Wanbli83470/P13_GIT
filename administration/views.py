@@ -21,7 +21,7 @@ def user_actif(request):
     global admin
     mon_user = str(request.user)
     user = str
-    if mon_user == "thomas":
+    if request.user.is_superuser:
         var_color = "violet"
         admin = True
         user1 = "admin"
@@ -79,7 +79,7 @@ def clients(request):
         else:
             error = True
     else:
-        form = ClientsForm(request.POST)
+        form = ClientsForm()
 
     return render(request, 'administration/clients.html', {"client": client, "form": form, 'var_color': var_color,
                                                          'admin': admin, 'user1': user1})

@@ -18,7 +18,7 @@ def user_actif(request):
     global admin
     mon_user = str(request.user)
     user = str
-    if mon_user == "thomas":
+    if request.user.is_superuser:
         var_color = "violet"
         admin = True
         user1 = "admin"

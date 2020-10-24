@@ -20,6 +20,6 @@ urlpatterns = [
          views.registration_valid, name="registrationValid"),
     path('deleteAccount', views.delete_account, name="delete_account"),
     path('resetPassword', views.reset_password, name="reset_password"),
-    path('resetPasswordStep/<str:username>/<str:adresse_mail>',
+    path('resetPasswordStep/<str:username>/<str:email_adress>',
          views.reset_password_step_2, name="resset_password_step"),
 ]

@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Client
 from django.core.exceptions import ValidationError
 
+
 class RegistrationForm(UserCreationForm):
     """Account creation form"""
     email = forms.EmailField(required=True)
@@ -55,12 +56,38 @@ class ResetPasswordStep2(forms.Form):
     code = forms.CharField(label="Code Email", max_length=30)
 
 
+class ClientModif(forms.Form):
+    """User details modification form"""
+    username = forms.CharField(label="username", max_length=20)
+    email_adress = forms.EmailField(label="email_adress", max_length=50)
+    phone = forms.CharField(label="phone", max_length=10, min_length=10)
+
+    def clean(self):
+        email_adress = self.cleaned_data.get('email_adress')
+        phone = self.cleaned_data.get('phone')
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(email=email_adress).exists():
+            raise ValidationError("Email exists")
+        if Client.objects.filter(Phone=phone).exists():
+            raise ValidationError("phone exists")
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("Nom d'utilisateur existant")
+        return self.cleaned_data
+
+
 class UserModif(forms.Form):
     """User details modification form"""
     username = forms.CharField(label="username", max_length=20)
-    password = forms.CharField(max_length=32, widget=forms.PasswordInput)
-    mail_adress = forms.EmailField(label="Email")
-    phone = forms.CharField(label="N°Tél", max_length=10)
+    email_adress = forms.EmailField(label="email_adress", max_length=50)
+
+    def clean(self):
+        email_adress = self.cleaned_data.get('email_adress')
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(email=email_adress).exists():
+            raise ValidationError("Email exists")
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("Nom d'utilisateur existant")
+        return self.cleaned_data
 
 
 class UploadFileForm(forms.Form):

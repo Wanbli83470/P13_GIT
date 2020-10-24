@@ -6,13 +6,18 @@ Mon espace
 {% load crispy_forms_tags %}
 {% block content %}
 
+<!--Display username-->
 <div class="p-3 bg-white shadow-lg">
     <h1>Mon espace personnel :</h1>
     <h2 class="ml-5">Bienvenue <strong class="text-vert">{{ user.username }} </strong> </h2>
     <br>
+
+<!--Clients Views-->
 {% if user1 == "client" %}
     <h3 class="ml-5">Votre compte est activé <i class="fas fa-clipboard-check text-{{var_color}}"></i></h3>
 </div>
+
+    <!--Clients Views informations-->
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Mes coordonnées :</h1>
         <ul class="text-vert">
@@ -23,6 +28,7 @@ Mon espace
         </ul>
     </div>
 
+    <!--Clients Views Workshops-->
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Mes prochaines séances :</h1>
         {% if nb_registered == 0 %}
@@ -42,6 +48,7 @@ Mon espace
         </ul>
     </div>
 
+    <!--Client modification form-->
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Modifier mes informations :</h1>
 
@@ -57,13 +64,15 @@ Mon espace
             </div>
         </a>
     </div>
+<!--Closing the Client View-->
 {% else %}
 {% endif %}
 
+<!--Opening the user area-->
 {% if user1 == "client_not_active" %}
-    {% if pdf_send is not True %}
+    <!--If pdf not transmitted-->
+    {% if pdf_send is False %}
     <hr>
-
         <h3>Attention ! Votre compte n'est pas encore activé <i class="fas fa-clipboard-check text-danger"></i></h3>
         <h4>Veuillez remplir et nous transmettre votre forumalaire :</h4>
 
@@ -71,24 +80,32 @@ Mon espace
             <li><h4><a href="{% static 'user_experience/'%}{{ path_pdf }} "> Télécharger mon formulaire </a></h4></li>
             <li><h4><a href="{% url 'upload_pdf' %}">Envoyer mon formulaire d'adhésion</a></h4></li>
         </ul>
-
     {% else %}
         <h3 class="ml-5 text-primary">Nous avons bien reçu votre formulaire, il est en cours de traitement !</h3>
     {% endif %}
     </div>
 
+    <!--User modification form-->
+
     <div class="p-3 bg-white shadow-lg mt-2">
         <h1>Modifier mes informations :</h1>
-    </div>
-    <br>
-    <a href="{% url 'resset_password_step' user.username user.email  %}">
-        <div class="center-block text-center">
-            <button type="button" class="btn btn-outline-danger btn-lg">Changer mon mot de passe</button>
-        </div>
-    </a>
 
+        <form class="w-50 text-center d-block mx-auto" role="form" action="{% url 'espace' %}" method="post">
+            {% csrf_token %}
+            {{ user_modif|crispy}}
+            <button type="submit" class="btn btn-outline-primary">Modifier mes informations</button>
+        </form>
+        <br>
+        <a href="{% url 'resset_password_step' user.username user.email  %}">
+            <div class="center-block text-center">
+                <button type="button" class="btn btn-outline-danger btn-lg">Changer mon mot de passe</button>
+            </div>
+        </a>
+    </div>
+<!--Closing the User View-->
 {% else %}
 {% endif %}
+
 <br>
 <br>
 <br>
@@ -97,7 +114,9 @@ Mon espace
 <br>
 <br>
 <br>
-{% if user1 != "admin" %}
+
+<!--Suppression de compte avec modal-->
+
 <hr class="text-alert border">
 
 <a href="#" data-target="#delete_compte" data-toggle="modal">
@@ -117,10 +136,5 @@ Mon espace
         </div>
     </div>
 </div>
-
-{% else %}
-{% endif %}
-
-
 
 {% endblock content %}

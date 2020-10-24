@@ -34,7 +34,7 @@ class MailForm(forms.Form):
     """Mail form"""
     Subject = forms.CharField(label="Sujet", max_length=30, required=True)
     mail_adress = forms.EmailField(required=True)
-    Body = forms.CharField(label="Votre message", max_length=200,
+    Body = forms.CharField(label="Votre message", max_length=300,
                            required=True, widget=forms.Textarea)
 
 
@@ -58,9 +58,9 @@ class ResetPasswordStep2(forms.Form):
 
 class ClientModif(forms.Form):
     """User details modification form"""
-    username = forms.CharField(label="username", max_length=20)
-    email_adress = forms.EmailField(label="email_adress", max_length=50)
-    phone = forms.CharField(label="phone", max_length=10, min_length=10)
+    username = forms.CharField(label="Nom d'utilisateur", max_length=20)
+    email_adress = forms.EmailField(label="Mon adresse email", max_length=50)
+    phone = forms.CharField(label="N°tél :", max_length=10, min_length=10)
 
     def clean(self):
         email_adress = self.cleaned_data.get('email_adress')
@@ -77,8 +77,8 @@ class ClientModif(forms.Form):
 
 class UserModif(forms.Form):
     """User details modification form"""
-    username = forms.CharField(label="username", max_length=20)
-    email_adress = forms.EmailField(label="email_adress", max_length=50)
+    username = forms.CharField(label="Nom d'utilisateur", max_length=20)
+    email_adress = forms.EmailField(label="Mon adresse email", max_length=50)
 
     def clean(self):
         email_adress = self.cleaned_data.get('email_adress')
@@ -92,3 +92,10 @@ class UserModif(forms.Form):
 
 class UploadFileForm(forms.Form):
     pdf_file = forms.FileField(label="Ma demande (Format PDF)")
+
+    def clean(self):
+        name_file = self.cleaned_data.get('pdf_file')
+        if "pdf" in name_file:
+            print("pdf okay")
+            raise ValidationError("Ceci n'est pas un fichier pdf")
+        return self.cleaned_data

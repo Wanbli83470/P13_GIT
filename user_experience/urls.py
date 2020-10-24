@@ -3,7 +3,7 @@ from django.urls import path
 
 from. import views
 urlpatterns = [
-    path('upload', views.upload_file, name="upload_pdf"),
+    path('upload', views.upload_pdf, name="upload_pdf"),
     path('connection', views.connection, name="connection"),
     path('disconnection', views.disconnection, name="disconnection"),
     path('workshop', views.workshop, name="workshop"),

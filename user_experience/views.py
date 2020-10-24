@@ -175,12 +175,17 @@ def my_espace(request):
     """Update the data user"""
     user = request.user
     path_pdf, registered, nb_registered, id_registered, workshop = None, None, None, None, None
-    client = Client.objects.get(user=user)
     pdf_input = PdfInput(user=user)
     pdf_input = pdf_input.pdf_file
     pdf_send = False
+
     """On modifie un client"""
     if user1 == "client":
+        client = Client.objects.get(user=user)
+        registered = Inscribe.objects.filter(client=client)
+        nb_registered = len(registered)
+        id_registered = [int(l) for l in str(registered) if l.isdecimal()]
+        workshop = Workshop.objects.order_by('date')
         if request.method == "POST":
             user_modif = ClientModif(request.POST or None)
             if user_modif.is_valid():
@@ -199,6 +204,26 @@ def my_espace(request):
         else:
             user_modif = ClientModif()
 
+    elif user1 == 'client_not_active':
+        try:
+            PdfOutput.objects.get(user=user)
+            pdf_send = True
+        except PdfOutput.DoesNotExist:
+            pdf_send = False
+        print("on Modifie un client non save")
+        client = User.objects.get(username=user.username)
+        if request.method == "POST":
+            user_modif = UserModif(request.POST or None)
+            if user_modif.is_valid():
+                username = user_modif.cleaned_data["username"]
+                email_adress = user_modif.cleaned_data["email_adress"]
+                user_ = User.objects.get(username=user.username)
+                user_.username, user_.email = username, email_adress
+                user_.save()
+            else:
+                print("error")
+        else:
+            user_modif = UserModif()
 
 
     """Display of workshops"""
@@ -206,10 +231,7 @@ def my_espace(request):
     name_pdf = f"formulaire_adhésion_{request.user.username}.pdf"
     pdf_bdd = PdfInput.objects.get(user=user)
     pdf_bdd.save()
-    registered = Inscribe.objects.filter(client=client)
-    nb_registered = len(registered)
-    id_registered = [int(l) for l in str(registered) if l.isdecimal()]
-    workshop = Workshop.objects.order_by('date')
+
 
     return render(request, "user_experience/my_espace.html", {'var_color': var_color, 'admin': admin,
                                                         'user1': user1, 'name_pdf': name_pdf, 'path_pdf': path_pdf,
@@ -219,9 +241,10 @@ def my_espace(request):
                                                         'pdf_send': pdf_send, 'pdf_input': pdf_input})
 
 
-def upload_file(request):
+def upload_pdf(request):
     """Page to host the paper form completed by the user"""
     user = request.user
+    user1 = user_actif(request)
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -234,7 +257,8 @@ def upload_file(request):
             pass
     else:
         form = UploadFileForm()
-    return render(request, 'user_experience/upload_pdf.html', {'form': form})
+    return render(request, 'user_experience/upload_pdf.html', {'var_color': var_color,
+                                                         'form':form, 'user1': user1})
 
 
 def contact_email(request):

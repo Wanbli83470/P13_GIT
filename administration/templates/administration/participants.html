@@ -1,10 +1,9 @@
 {% extends 'content_static/home.html' %}
-{% block title %} Inscribe {% endblock title %}
+{% block title %} Participants {% endblock title %}
 {% load crispy_forms_tags %}
 {% block content %}
-
+<!--Workshop summary page-->
 <h1 class="m-5 text-{{var_color}}"> <strong> {{ nb_participants }} </strong> Participants à l'atelier :<strong>{{ select_atelier.type }}</strong> ; date :  <strong>{{ select_atelier.date }}</strong> </h1>
-
 <table class="table table-{{var_color}} m-5">
   <hr>
   <thead>
@@ -15,18 +14,19 @@
         <td>{{ p.client }}</td>
       </tr>
     {% empty %}
-    <h4 class="m-5" >Aucun participants enregistrés</h4>
+      <h4 class="m-5" >Aucun participants enregistrés</h4>
     {% endfor %}
-
   </tbody>
 </table>
+<!--Insertion of variable data from Database-->
 <h2 class="m-5 text-{{var_color}}"> Nombres de places : <strong> {{select_atelier.nb_places}} </strong> </h2>
 <h2 class="m-5 text-{{var_color}}"> Restantes : <strong> {{places_restantes}} </strong> </h2>
 <h2 class="m-5 text-{{var_color}}"> Lieux : <strong> {{select_atelier.location}} </strong> </h2>
+<!--If registration opens-->
 {% if select_atelier.places %}
-<h2 class="m-5 text-{{var_color}}"> Inscription ouverte ? <strong> OUI </strong> </h2>
+  <h2 class="m-5 text-{{var_color}}"> Inscription ouverte ? <strong> OUI </strong> </h2>
 {% else %}
-<h2 class="m-5 text-{{var_color}}"> Inscription ouverte ? <strong> NON </strong> </h2>
+  <h2 class="m-5 text-{{var_color}}"> Inscription ouverte ? <strong> NON </strong> </h2>
 {% endif %}
 
 {% endblock content %}

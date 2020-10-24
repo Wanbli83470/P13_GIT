@@ -38,12 +38,6 @@ class MailForm(forms.Form):
                            required=True, widget=forms.Textarea)
 
 
-class ClientsForm(ModelForm):
-    class Meta:
-        model = Client
-        fields = '__all__'
-
-
 class ResetPassword(forms.Form):
     """Form to obtain the user ID"""
     mail_adress = forms.CharField(label="adresse_mail", max_length=30, required=False)

@@ -2,6 +2,9 @@
 {% block title %} Base Yoga {% endblock %}
 {% block content %}
 
+<!--Information page on Yoga in general-->
+
+<!--Dynamic menu in JS to reach a section of the page-->
 <h1 id="rubrique" class="text-center"><small class="text-primary"> Selectionnez la rubrique que vous souhaitez consulter </small></h1><hr>
 <div id="select" class="container-fluid sticky-top bg-light pt-2">
     <div class="row border-left rounded-left border-primary">
@@ -12,13 +15,15 @@
         <div class="col-sm-6 col-lg-2 border-right text-center"> <a class="js-scrollTo" href="#patanjali" > <h3> Patanjali  </h3> </a> </div>
     </div>
 </div>
+
+
+
 <br>
 <hr class="bg-primary">
-<div id="yoga_description" class="p-5">
-
+<!--Section Description-->
+<section id="yoga_description" class="p-5">
     <h1>Base du Yoga</h1>
 <h3 class="text-vert" >Le yoga signifie association, union du corps, de l'esprit et de l'âme.</h3>
-
 C'est un enseignement venu d'Inde. Aujourd'hui de plus en plus de personnes s'y intéressent et le pratiquent. Le yoga fait partie des meilleures techniques pour dénouer les tensions physiques et mentales et connaître les méthodes qui permettent de retrouver le calme et la sérénité.
 <br><br>
     <a href="#">
@@ -50,11 +55,11 @@ L' art du yoga est donc le plus ancien système global nous a été transmis pou
 Le yoga comporte trois éléments principaux : les postures du corps, le contrôle de la respiration et la relaxation profonde.
         <hr>
     </p>
+</section>
 
 
-</div>
-
-<div id="posture" class="p-5">
+<!--Section posture-->
+<section id="posture" class="p-5">
     <h1>
        Postures
     </h1>
@@ -92,10 +97,10 @@ Le yoga comporte trois éléments principaux : les postures du corps, le contrô
     <li>SHALABASANA : posture de la sauterelle</li>
 
 </ul>
-</div>
+</section>
 
-
-<div id="patanjali" class="p-5 text-center">
+<!--Section Pantalji-->
+<section id="patanjali" class="p-5 text-center">
     <h1> L'échelle de Patanjali </h1>
 <h3> <strong>L’échelle de Patanjali structure les contenus techniques du
 yoga en classe en distinguant les « degrés à gravir pour
@@ -119,10 +124,10 @@ Augmenter la puissance de travail
 • SE CONCENTRER (Dharana)
 Cibler un objectif, se déterminer à agir, lâcher prise, faire confiance.
 </p>
-</div>
+</section>
 
-
-<div id="Méditation" class="p-5">
+<!--Section Meditation-->
+<section id="Méditation" class="p-5">
 <h1>Méditation</h1>
 <p>
 
@@ -203,9 +208,9 @@ En quoi facilitent-ils la méditation ?
 
 Les Malas facilitent la méditation car ils servent à compter des mantras, le fait de compter “apaise” le mental. De plus, les vertus des pierres utilisées ont aussi un effet bénéfique sur le mental de la personne qui médite avec un Mala, que ce soit en récitant des mantras ou en le portant simplement.
 </p>
-</div>
-
-<div id="respiration" class="p-5">
+</section>
+<!--Section respiration-->
+<section id="respiration" class="p-5">
     <h1>Respiration</h1>
     <p>
 
@@ -228,5 +233,5 @@ Pour commencer, je vous propose de suivre un rythme déterminé ou un ratio entr
 
     </p>
 
-</div>
+</section>
 {% endblock content %}

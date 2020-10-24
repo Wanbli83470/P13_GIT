@@ -1,6 +1,9 @@
 {% extends 'content_static/home.html' %}
 {% block title %} Mediathèque {% endblock %}
 {% block content %}
+
+<!-- Dynamic menu in JS to reach a section of the page -->
+
 <h1 id="rubrique" class="text-center"><small class="text-primary"> Selectionnez la rubrique que vous souhaitez consulter </small></h1><hr>
 <div id="select" class="container-fluid sticky-top bg-light pt-2">
     <div class="row border-left rounded-left border-primary">
@@ -11,11 +14,17 @@
 
 
 
+<!-- Section video -->
+
 
 <div id="vidéo" class="bg-white  p-5">
     <h1 class="text-center">Vidéo</h1>
     <hr>
 </div>
+
+
+<!-- Music therapy section -->
+
 
 <div class="bg-white p-5" id="musicothérapie">
     <h1 class="text-center text-{{var_color}}">Musicothérapie</h1>
@@ -84,17 +93,5 @@ Voici donc quelques morceaux, vous pourrez en trouver d'autres sur internet sans
 
 L'idéal dans tous les cas est d'écouter ces morceaux avec un casque dans un endroit calme et de commencer par quelques minutes d'écoute et bien sûr d'écouter ce qui vous convient au bon moment : éviter les ondes gamma pour s'endormir par exemple ! </p>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock content %}

@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-
+<!--Client registration form  by administrator-->
 
 <form class="text-center" action="{% url 'clients' %}" method="post">
     {% csrf_token %}
@@ -11,6 +11,8 @@
     <button type="submit" value="User" class="btn btn-{{var_color}}">Enregistrer</button>
 </form>
 <br>
+
+<!--Summary table of registered clients-->
 <table class="table table-{{var_color}}">
   <h1 class="text-center">Utilisateurs enregistrés</h1>
   <hr>
@@ -25,6 +27,7 @@
     </tr>
   </thead>
   <tbody>
+<!--For django loop-->
     {% for c in client %}
       <tr>
         <th scope="row">1</th>
@@ -35,7 +38,6 @@
         <td>{{  c.Phone }}</td>
       </tr>
     {% endfor %}
-
   </tbody>
 </table>
 

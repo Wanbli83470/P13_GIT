@@ -40,14 +40,14 @@ class MailForm(forms.Form):
 
 class ResetPassword(forms.Form):
     """Form to obtain the user ID"""
-    mail_adress = forms.CharField(label="adresse_mail", max_length=30, required=False)
+    mail_adress = forms.EmailField(label="adresse_mail", max_length=30, required=False)
     username = forms.CharField(label="username", max_length=20, required=False)
 
 
 class ResetPasswordStep2(forms.Form):
     """New Password Form"""
     password = forms.CharField(max_length=32, widget=forms.PasswordInput)
-    code = forms.CharField(label="Code Email", max_length=30)
+    code = forms.CharField(label="Code Email", max_length=5)
 
 
 class ClientModif(forms.Form):

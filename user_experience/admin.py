@@ -19,7 +19,6 @@ class SecretAdmin(admin.ModelAdmin):
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'Phone', 'mail_adress')
     list_filter = ('first_name',)
-    date_hierarchy = 'date'
     ordering = ('first_name',)
     search_fields = ('mail_adress', 'first_name', 'last_name')
 

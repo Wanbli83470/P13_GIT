@@ -43,7 +43,7 @@ def user_actif(request):
         var_color = "vert"
         user1 = "client"
         admin = False
-    elif my_user not in list_client and my_user is not "AnonymousUser" :
+    elif my_user not in list_client and my_user is not "AnonymousUser":
         user1 = "client_not_active"
         var_color = "vert"
     elif my_user == "AnonymousUser":

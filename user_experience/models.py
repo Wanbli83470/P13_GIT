@@ -23,7 +23,7 @@ class Workshop(models.Model):
     type = models.CharField(max_length=30)
     nb_places = models.IntegerField()
     places = models.BooleanField(default=True)
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=50)
 
     def __str__(self):
@@ -32,7 +32,7 @@ class Workshop(models.Model):
             .format(self.type, self.date, self.nb_places, self.id)
 
     def get_absolute_url(self):
-        return reverse('home')
+        return reverse('admin')
 
 
 class Client(models.Model):
@@ -41,8 +41,8 @@ class Client(models.Model):
     first_name = models.CharField(max_length=254, default="test")
     last_name = models.CharField(max_length=255)
     Phone = models.CharField(max_length=10)
-    date = models.DateTimeField(default=timezone.now)
-    mail_adress = models.EmailField(max_length=254)
+    date_birth = models.DateTimeField(default=timezone.now)
+    mail_adress = models.EmailField(max_length=30)
 
     def __str__(self):
         return "CLIENT : {} NOM : {} ID : {}\n Tél : {} Email : {}"\
@@ -61,7 +61,7 @@ class Inscribe(models.Model):
 class SecretCode(models.Model):
     """SQL table containing the secret code for each user"""
     user = models.OneToOneField(User, on_delete=ChildProcessError)
-    code = models.CharField(max_length=254, default=str(random.randint(10000, 100000)))
+    code = models.CharField(max_length=254, default=str(random.randint(10001, 99999)))
 
     def __str__(self):
         return f"Utilisateur : {self.user.username} / Code secret : {self.code}"

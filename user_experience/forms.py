@@ -86,10 +86,3 @@ class UserModif(forms.Form):
 
 class UploadFileForm(forms.Form):
     pdf_file = forms.FileField(label="Ma demande (Format PDF)")
-
-    def clean(self):
-        name_file = self.cleaned_data.get('pdf_file')
-        if "pdf" in name_file:
-            print("pdf okay")
-            raise ValidationError("Ceci n'est pas un fichier pdf")
-        return self.cleaned_data

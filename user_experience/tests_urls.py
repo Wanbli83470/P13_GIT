@@ -6,7 +6,7 @@ from user_experience.views import *
 
 
 class TestUrls(SimpleTestCase):
-
+    print("Test des urls")
     def test_list_url_static(self):
         url_yoga = reverse("yoga")
         url_music = reverse("music_therapy")

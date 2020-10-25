@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     CreateView,
     )
+from django.contrib.auth.decorators import user_passes_test
 var_color = "vert"
 admin = False
 
@@ -39,6 +40,7 @@ def user_actif(request):
 # Create your views here.
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def participants(request, id_atelier):
     user1 = user_actif(request)
     if user1 != "admin":

@@ -70,6 +70,7 @@ Mon espace
 
 <!--Opening the user area-->
 {% if user1 == "client_not_active" %}
+    <h2 class="ml-5">Mon email : <strong class="text-vert">{{ user.email }} </strong> </h2>
     <!--If pdf not transmitted-->
     {% if pdf_send is False %}
     <hr>

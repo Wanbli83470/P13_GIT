@@ -14,7 +14,6 @@ from django.contrib.auth.forms import UserCreationForm
 from .generate_pdf import ExportPdf
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, Http404
-from django.urls import reverse
 
 var_color = "vert"
 admin = False
@@ -57,7 +56,7 @@ def get_id_client(request):
     client = Client.objects.get(user=username)
     return client.id
 
-
+@login_required(login_url="connection")
 def workshop(request):
     """View all workshops : administrator view and user view"""
     if user_actif(request) != "client_not_active":
@@ -241,6 +240,7 @@ def my_espace(request):
                                                         'pdf_send': pdf_send, 'pdf_input': pdf_input})
 
 
+@login_required(login_url="connection")
 def upload_pdf(request):
     """Page to host the paper form completed by the user"""
     user = request.user
@@ -251,7 +251,16 @@ def upload_pdf(request):
             pdf_save = PdfOutput()
             pdf_save.user = user
             pdf_save.pdf_file = request.FILES['pdf_file']
+            print("test" + str(pdf_save.pdf_file))
             pdf_save.save()
+
+            subject = "Nouveau formulaire Papier Melodyoga"
+            body = f"L'utilisateur {user.username} vient d'envoyer sa demande d'adhésion !"
+            email_confirm = EmailMessage(subject, body, mail_soph, [mail_soph])
+            email_confirm.content_subtype = "html"
+            email_confirm.attach_file(f"{pdf_save.pdf_file}")
+            email_confirm.send()
+
             return redirect('home')
         else:
             pass
@@ -261,6 +270,7 @@ def upload_pdf(request):
                                                          'form':form, 'user1': user1})
 
 
+@login_required(login_url="connection")
 def contact_email(request):
     """Email contact form to speak to the administrator"""
     user1 = user_actif(request)
@@ -281,7 +291,7 @@ def contact_email(request):
     return render(request, 'user_experience/contact_mail.html', {'mail_form': mail_form, 'var_color': var_color,
                                                          'admin': admin, 'user1': user1})
 
-
+@login_required(login_url="connection")
 def inscribe_workshop(request, id_workshop, id_client):
     """Focntion registering a workshop and sending an email to the client"""
     user1 = user_actif(request)
@@ -301,7 +311,7 @@ def inscribe_workshop(request, id_workshop, id_client):
 
     return render(request, 'user_experience/inscribe_workshop.html', {'var_color': var_color, 'admin': admin, 'user1': user1})
 
-
+@login_required(login_url="connection")
 def unsubscribe_workshop(request, id_workshop, id_client):
     """Focntion to unsubscribe a customer from the workshop + confirmation email"""
     user1 = user_actif(request)
@@ -325,7 +335,7 @@ def unsubscribe_workshop(request, id_workshop, id_client):
 
     return redirect('home')
 
-
+@login_required(login_url="connection")
 def detail_workshop(request, id_workshop, id_client):
     """Show workshop details and manage registration"""
     if user_actif(request) == "client":
@@ -470,7 +480,7 @@ def reset_password_step_2(request, username, email_adress):
                                                                      'form_password': form_password, 'echec': echec,
                                                                      "username": username, 'error': error})
 
-
+@login_required(login_url="connection")
 def delete_account(request):
     """User delete function. With the elimination of workshops and data attached to the client"""
     user = request.user

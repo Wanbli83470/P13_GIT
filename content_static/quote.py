@@ -1,9 +1,5 @@
 import time
-from datetime import datetime, date, time
-today = datetime.now()
-today = today.date()
-week = today.isocalendar()
-week = week[1]
+from datetime import datetime
 
 line = ["Celui qui est le maître de lui-même est plus grand que celui qui est le maître du monde.",
           "Doutez de tout et surtout de ce que je vais vous dire.",
@@ -59,4 +55,17 @@ line = ["Celui qui est le maître de lui-même est plus grand que celui qui est 
           "Quelles qu’aient été les difficultés du passé, tu peux toujours recommencer à zéro aujourd’hui.",
           ]
 
-quote_day = (line[week])
+
+class QuoteWeek:
+    """Get a Buddhism Quote by Week Number"""
+    def __init__(self):
+        self.today = datetime.now().date()  # Year / month / day formatting
+        self.week = self.today.isocalendar()[1]  # Get the week number
+
+    def get_quote_week(self):
+        quote_day = (line[self.week])
+        return quote_day
+
+
+quote_day = QuoteWeek()
+quote_day = quote_day.get_quote_week()
